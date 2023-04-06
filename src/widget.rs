@@ -1,7 +1,7 @@
-use crate::config::GeneralConfig;
 use std::fmt;
 use std::fmt::Formatter;
 
+use crate::config::GeneralConfig;
 use crate::formatting::{Format, Placeholders};
 use crate::output::color::Color;
 
