@@ -21,6 +21,7 @@ pub trait OutputFormatter: Debug {
     }
     fn init(&self) {}
     fn status_line(&self, rendered_widgets: &[RenderedWidget]);
+    fn stop(&self) {}
 }
 
 pub fn output_formatter(o: &str) -> Arc<dyn OutputFormatter> {

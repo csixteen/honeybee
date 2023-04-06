@@ -11,7 +11,7 @@ impl OutputFormatter for XmoBar {
 
     fn full_text(&self, config: &GeneralConfig, widget: &Widget) -> String {
         let content = widget.content.to_string();
-        let color = self.fg_color(config, &widget);
+        let color = self.fg_color(config, widget);
         format!("{}{}</fc>", color, content)
     }
 

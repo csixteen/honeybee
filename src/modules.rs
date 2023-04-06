@@ -18,6 +18,7 @@ impl Module {
     }
 }
 
+#[allow(dead_code)]
 #[derive(Clone, Debug, Default, Eq, PartialEq)]
 enum ModuleState {
     #[default]

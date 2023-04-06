@@ -28,4 +28,8 @@ impl OutputFormatter for I3Bar {
     fn status_line(&self, rendered_widgets: &[RenderedWidget]) {
         protocol::status_line(rendered_widgets);
     }
+
+    fn stop(&self) {
+        protocol::stop();
+    }
 }

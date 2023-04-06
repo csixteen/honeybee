@@ -75,7 +75,7 @@ impl TryFrom<&str> for Unit {
     fn try_from(value: &str) -> Result<Self, Self::Error> {
         match value {
             "auto" => Ok(Unit::Auto),
-            _ => Unit::try_from(value.chars().nth(0).unwrap()),
+            _ => Unit::try_from(value.chars().next().unwrap()),
         }
     }
 }
