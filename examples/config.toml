@@ -1,0 +1,10 @@
+output_format = "i3bar"
+colors = true
+color_good = "#00AA00"
+
+[[module]]
+module = "memory"
+format_degraded = "[$available / $percentage_available]"
+
+[module.format]
+full = "$used"
