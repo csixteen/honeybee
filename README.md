@@ -12,6 +12,22 @@ Hopefully, soon I'll write an extensive companion blog post.
 For now, you'll have to clone the repository. Then it's business as usual:
 
 ```shell
+cargo run
+```
+
+You can also pass CLI args to it:
+```
+$ cargo run -- --run-once
+    Finished dev [unoptimized + debuginfo] target(s) in 0.03s
+     Running `target/debug/honeybee --run-once`
+{"version":1,"click_events":true}
+[
+  [{"full_text":"4.9 GiB","color":"#00AA00","background":"#000000","border":"#222222","border_top":1,"border_right":1,"border_bottom":1,"border_left":1,"align":"Left","separator":true,"separator_block_width":9,"markup":"None"}]
+]
+```
+
+If you want to see the available CLI options:
+```shell
 cargo run -- --help
 ```
 
