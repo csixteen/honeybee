@@ -5,6 +5,7 @@ use tokio::io::{AsyncBufReadExt, BufReader};
 use super::prelude::*;
 
 #[derive(Clone, Debug, SmartDefault, PartialEq, Deserialize)]
+#[serde(default)]
 pub struct Config {
     format: Format,
     format_degraded: Format,
@@ -170,10 +171,10 @@ mod tests {
 
     #[test]
     fn test_memoryu_absolute() {
-        assert_eq!(Ok(50), memory_absolute("50 %".into(), 100));
-        assert_eq!(Ok(50), memory_absolute("50%".into(), 100));
-        assert_eq!(Ok(1024), memory_absolute("1K".into(), 100));
-        assert_eq!(Ok(1024), memory_absolute("1k".into(), 100));
-        assert_eq!(Ok(1024), memory_absolute("1 K".into(), 100));
+        assert_eq!(50, memory_absolute("50 %".into(), 100).unwrap());
+        assert_eq!(50, memory_absolute("50%".into(), 100).unwrap());
+        assert_eq!(1024, memory_absolute("1K".into(), 100).unwrap());
+        assert_eq!(1024, memory_absolute("1k".into(), 100).unwrap());
+        assert_eq!(1024, memory_absolute("1 K".into(), 100).unwrap());
     }
 }

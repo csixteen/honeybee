@@ -21,16 +21,16 @@ impl Format {
     }
 
     pub fn with_default(self, full: &str) -> Self {
-        Self {
-            full_text: Some(full.to_owned()),
-            ..self
-        }
+        self.with_defaults(full, "")
     }
 
     pub fn with_defaults(self, full: &str, short: &str) -> Self {
+        let full_text = self.full_text.or_else(|| Some(full.into()));
+        let short_text = self.short_text.or_else(|| Some(short.into()));
+
         Self {
-            full_text: Some(full.to_owned()),
-            short_text: Some(short.to_owned()),
+            full_text,
+            short_text,
         }
     }
 
@@ -170,5 +170,22 @@ impl Value {
 
     pub fn percentage(value: f64) -> Value {
         Self::Percentage(value)
+    }
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn test_format_with_defaults() {
+        let f = Format {
+            full_text: Some("foo".into()),
+            short_text: Some("bar".into()),
+        }
+        .with_defaults("foo2", "bar2");
+
+        assert_eq!(Some("foo".into()), f.full_text);
+        assert_eq!(Some("bar".into()), f.short_text);
     }
 }
