@@ -79,12 +79,12 @@ pub(crate) async fn run(config: Config, bridge: Bridge) -> Result<()> {
 }
 
 fn memory_absolute(mem_amount: &str, mem_total: u64) -> Result<u64> {
-    let (digits, unit): (String, String) = mem_amount.chars().partition(|c| c.is_digit(10));
+    let (digits, unit): (String, String) = mem_amount.chars().partition(|c| c.is_ascii_digit());
     let amount = u64::from_str(&digits).error("Bad threshold string")?;
     let unit = unit
         .trim_start()
         .chars()
-        .nth(0)
+        .next()
         .error("Bad threshold string")?;
 
     if unit == '%' {

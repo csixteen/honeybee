@@ -57,7 +57,7 @@ pub trait ResultExt<T> {
 
 impl<T, E: StdError + Send + Sync + 'static> ResultExt<T> for Result<T, E> {
     fn error<M: Into<ErrorMsg>>(self, message: M) -> Result<T> {
-        self.map_err(|e| Error {
+        self.map_err(|_| Error {
             kind: ErrorKind::Other,
             message: Some(message.into()),
             source: None,

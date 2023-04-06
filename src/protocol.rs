@@ -29,14 +29,6 @@ impl Header {
     pub fn new() -> Self {
         Default::default()
     }
-
-    pub fn no_pause() -> Self {
-        Header {
-            version: 1,
-            stop_signal: Some(0),
-            ..Default::default()
-        }
-    }
 }
 
 #[derive(Clone, Debug, Eq, PartialEq, Serialize)]
@@ -67,8 +59,10 @@ pub struct Block {
     pub short_text: Option<String>,
     #[default(Some(Default::default()))]
     pub color: Option<Color>,
-    pub background: Option<String>,
-    pub border: Option<String>,
+    #[default(Some(Color::try_from("#000000").unwrap()))]
+    pub background: Option<Color>,
+    #[default(Some(Color::try_from("#222222").unwrap()))]
+    pub border: Option<Color>,
     #[default(Some(1))]
     pub border_top: Option<usize>,
     #[default(Some(1))]
@@ -118,4 +112,8 @@ pub fn status_line(rendered_widgets: &[RenderedWidget]) {
         .collect();
 
     println!("  {}", serde_json::to_string(&v).unwrap());
+}
+
+pub fn stop() {
+    println!("]");
 }

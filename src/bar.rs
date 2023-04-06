@@ -73,13 +73,18 @@ impl Bar {
         }
     }
 
-    pub async fn run(&mut self) -> Result<()> {
+    pub async fn run(&mut self, run_once: bool) -> Result<()> {
         self.output_format.init();
 
         loop {
             if let Err(e) = self.handler().await {
                 println!("{e}");
                 // TODO - handler error
+            }
+
+            if run_once {
+                self.output_format.stop();
+                return Ok(());
             }
         }
     }

@@ -20,6 +20,7 @@ pub struct Config {
 pub struct GeneralConfig {
     #[default = "i3bar"]
     pub output_format: String,
+    #[default = true]
     pub colors: bool,
     pub separator: String,
     #[default(Color::try_from("#333333").unwrap())]
