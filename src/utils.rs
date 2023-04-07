@@ -33,7 +33,7 @@ where
 /// 4. $XDG_DATA_DIRS/honeybee/config.toml
 /// 5. $XDG_CONFIG_DIRS/honeybee/config.toml
 ///
-/// Reference: https://wiki.archlinux.org/title/XDG_Base_Directory
+/// Reference: `<https://wiki.archlinux.org/title/XDG_Base_Directory>`
 pub fn get_config_path(file: &str) -> Option<PathBuf> {
     let t = shellexpand::tilde(file);
     let f = Path::new(t.as_ref());
