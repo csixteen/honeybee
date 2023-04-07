@@ -1,13 +1,18 @@
-use std::fmt;
-use std::fmt::Formatter;
+//! Structs and methods to manipulate widgets. A [`Widget`] is a graphical element
+//! that is used to render the output of a [`Module`].
+//!
+//! [`Module`]: crate::modules
+use std::fmt::{self, Formatter};
 
 use crate::config::GeneralConfig;
 use crate::formatting::{Format, Placeholders};
 use crate::output::color::Color;
 
+/// The graphical element that is used to render the
+/// output of a module.
 #[derive(Clone, Debug, Default)]
 pub struct Widget {
-    state: WidgetState,
+    pub state: WidgetState,
     pub content: ContentType,
 }
 
@@ -43,6 +48,7 @@ impl Widget {
     }
 }
 
+/// The state of the widget will define its color value.
 #[derive(Clone, Debug, Default, Eq, PartialEq)]
 pub(crate) enum WidgetState {
     #[default]

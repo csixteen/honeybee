@@ -1,3 +1,9 @@
+//! [xmobar] is a minimalistic, mostly text based, status bar. It was originally designed
+//! and implemented by Andrea Rossato to work with [xmonad], but it's actually usable with
+//! any window-manager.
+//!
+//! [xmobar]: https://archives.haskell.org/projects.haskell.org/xmobar/
+//! [xmonad]: https://xmonad.org/
 use super::prelude::*;
 
 #[derive(Clone, Debug, Eq, PartialEq)]

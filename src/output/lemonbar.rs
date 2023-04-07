@@ -1,3 +1,7 @@
+//! [lemonbar] is a lightweight bar based entirely on XCB. It has full UTF-8 support
+//! and is EWMH compliant.
+//!
+//! [lemonbar]: https://github.com/LemonBoy/bar
 use super::prelude::*;
 
 #[derive(Clone, Debug, Eq, PartialEq)]

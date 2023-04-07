@@ -1,3 +1,8 @@
+//! Establishes the communication between individual modules and the [`Bar`].
+//! Each module has its own bridge.
+//!
+//! [`Bar`]: crate::bar
+
 use tokio::sync::mpsc::Sender;
 
 use crate::errors::*;
@@ -20,10 +25,14 @@ impl Bridge {
         }
     }
 
+    /// Builds a new timer to be used by the corresponding module.
     pub(crate) fn timer(&self) -> Timer {
         Timer::new(self.update_interval)
     }
 
+    /// Tells the [`Bar`] to set the widget for the corresponding module.
+    ///
+    /// [`Bar`]: crate::bar
     pub(crate) async fn set_widget(&self, widget: Widget) -> Result<()> {
         self.update_sender
             .send(Request::SetWidget {

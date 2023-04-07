@@ -1,7 +1,7 @@
 //! The `output_format` configuration defines the format strings honeybee will use
 //! in its outputs.
 //!
-//! Supported output formats are `i3bar`, `dzen2`, `xmobar`, `lemonbar` and `term`.
+//! Supported output formats are [`i3bar`], [`dzen2`], [`xmobar`], [`lemonbar`] and [`term`].
 
 use std::fmt::Debug;
 use std::sync::Arc;

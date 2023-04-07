@@ -1,3 +1,4 @@
+//! This is the main container of all the running modules.
 use std::sync::Arc;
 
 use futures::stream::{FuturesUnordered, StreamExt};
@@ -90,6 +91,7 @@ impl Bar {
     }
 }
 
+/// A rendered widget can be simply a string or an i3 Block.
 #[derive(Clone, Debug, SmartDefault, Eq, PartialEq)]
 pub enum RenderedWidget {
     #[default]
