@@ -6,12 +6,12 @@ use crate::config::GeneralConfig;
 use crate::widget::Widget;
 
 pub mod color;
-mod dzen2;
-mod i3bar;
-mod lemonbar;
+pub mod dzen2;
+pub mod i3bar;
+pub mod lemonbar;
 mod prelude;
-mod term;
-mod xmobar;
+pub mod term;
+pub mod xmobar;
 
 pub trait OutputFormatter: Debug {
     fn fg_color(&self, config: &GeneralConfig, widget: &Widget) -> String;

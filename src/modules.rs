@@ -6,7 +6,7 @@ use crate::bridge::Bridge;
 use crate::errors::*;
 use crate::types::BoxedFuture;
 
-mod memory;
+pub mod memory;
 mod prelude;
 
 #[derive(Clone, Debug, SmartDefault)]
