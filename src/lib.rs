@@ -1,3 +1,9 @@
+//! `honeybee` is a port of i3status written in Rust. It means that it's compatible with the
+//! [i3bar protocol](https://i3wm.org/docs/i3bar-protocol.html), but also generates status line
+//! for dzen2,xmobar and lemonbar.
+
+#![cfg_attr(docsrs, feature(doc_cfg))]
+
 #[allow(clippy::large_enum_variant)]
 pub mod bar;
 pub mod bridge;
