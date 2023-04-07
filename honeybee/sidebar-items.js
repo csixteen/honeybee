@@ -1,0 +1,1 @@
+window.SIDEBAR_ITEMS = {"macro":[["map",""]],"mod":[["bar",""],["config",""],["errors",""],["modules",""],["utils",""]],"struct":[["CliArgs","A port of the original i3status(1) written in Rust. This is mostly a learning exercise, although my aim is to port it completely and, eventually, enhance with other features."]]};
