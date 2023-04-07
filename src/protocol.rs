@@ -1,3 +1,8 @@
+//! i3bar protocol. For full reference, check the main [documentation](https://i3wm.org/docs/i3bar-protocol.html).
+//!
+//! The main structures of this module are `Header, `Block` and `ClickEvent`. This is only relevant
+//! if you choose `i3bar` as the `output_format`.
+
 use serde::{Deserialize, Serialize};
 use serde_with::skip_serializing_none;
 use smart_default::SmartDefault;
@@ -5,6 +10,7 @@ use smart_default::SmartDefault;
 use crate::bar::RenderedWidget;
 use crate::output::color::Color;
 
+/// The first message in the protocol is a header block.
 #[skip_serializing_none]
 #[derive(Clone, Debug, SmartDefault, Eq, PartialEq, Serialize)]
 pub struct Header {
@@ -34,6 +40,8 @@ impl Header {
 #[derive(Clone, Debug, Eq, PartialEq, Serialize)]
 pub enum BlockWidth {
     Pixels(usize),
+    /// The width of the text will determine the block width
+    /// in pixels.
     Text(String),
 }
 
@@ -55,31 +63,56 @@ pub enum Markup {
 #[skip_serializing_none]
 #[derive(Clone, Debug, SmartDefault, Eq, PartialEq, Serialize)]
 pub struct Block {
+    /// This is the only required key by the protocol. If it's an empty string,
+    /// then the block will be skipped.
     pub full_text: String,
+    /// If provided, the `short_text` will be used when the status line needs to be shortened
+    /// (because it uses more space than your screen provides).
     pub short_text: Option<String>,
+    /// The color used to display the contents of `full_text` or `short_text`.
     #[default(Some(Default::default()))]
     pub color: Option<Color>,
+    /// Overrides the background color for this particular block.
     #[default(Some(Color::try_from("#000000").unwrap()))]
     pub background: Option<Color>,
+    /// Overrides the border color for this particular block.
     #[default(Some(Color::try_from("#222222").unwrap()))]
     pub border: Option<Color>,
     #[default(Some(1))]
+    /// Defines the width (in pixels) of the top border of this block.
     pub border_top: Option<usize>,
+    /// Defines the width (in pixels) of the right border of this block.
     #[default(Some(1))]
     pub border_right: Option<usize>,
+    /// Defines the width (in pixels) of the bottom border of this block.
     #[default(Some(1))]
     pub border_bottom: Option<usize>,
+    /// Defines the width (in pixels) of the left border of this block.
     #[default(Some(1))]
     pub border_left: Option<usize>,
+    /// The minimum width, in pixels, of this block. If `full_text` takes less
+    /// space than the `min_width`, then the block will be padded to the left
+    /// and/or right, depending on the `alignment`.
     pub min_width: Option<BlockWidth>,
+    /// Aligns the text on the center, left or right, when the `min_width` is not
+    /// reached.
     pub align: Alignment,
+    /// Specifies whether the current value is urgent (e.g. no more disk space).
     pub urgent: Option<bool>,
+    /// Unique name of this block, used to identify it in scripts when processing
+    /// the output.
     pub name: Option<String>,
+    /// In case there are multiple instances of a block (e.g. multiple disk space
+    /// blocks for multiple mount points).
     pub instance: Option<String>,
+    /// Indicates whether a separator line should be drawn after this block.
     #[default(Some(true))]
     pub separator: Option<bool>,
+    /// Amount of pixels to leave blank after the block. Unless `separator` is disabled,
+    /// a separator line will be drawn in the middle of this gap.
     #[default(Some(9))]
     pub separator_block_width: Option<usize>,
+    /// Indicates how the block should be parsed.
     pub markup: Markup,
 }
 
