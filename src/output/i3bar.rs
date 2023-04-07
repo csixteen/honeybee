@@ -1,3 +1,8 @@
+//! i3bar output format
+//!
+//! This output type uses JSON to pass as much meta-information to i3bar as possible.
+//! See [[crate::protocol]] for more information.
+
 use super::prelude::*;
 
 #[derive(Clone, Debug, Eq, PartialEq)]
