@@ -1,18 +1,18 @@
 #[allow(clippy::large_enum_variant)]
 pub mod bar;
-mod bridge;
+pub mod bridge;
 pub mod config;
 pub mod errors;
-mod formatting;
+pub mod formatting;
 mod macros;
 pub mod modules;
-pub(crate) mod output;
-mod protocol;
-pub(crate) mod timer;
-pub(crate) mod types;
-mod units;
+pub mod output;
+pub mod protocol;
+pub mod timer;
+pub mod types;
+pub mod units;
 pub mod utils;
-mod widget;
+pub mod widget;
 
 use clap::Parser;
 
