@@ -1,5 +1,5 @@
 # honeybee
-This is a port of the original [i3status](https://github.com/i3/i3status) written in Rust. This was meant to be a learning exercise and for my personal use. It's still lacking lots of functionality and proper error handling / robustness, so use it at your own peril. On the other hand, contributions are welcome!
+This is a port of the original [i3status](https://github.com/i3/i3status) written in Rust. This was meant to be a learning exercise and for my personal use. It's still lacking lots of functionality and proper error handling / robustness, so use it at your own peril.
 
 # Motivation
 
@@ -9,7 +9,7 @@ Hopefully, soon I'll write an extensive companion blog post.
 
 # Getting started
 
-You can download a pre-compiled version from the [releases](https://github.com/csixteen/honeybee/releases) page. Alternatively, if you have Rust installed, you can clone the repository and run `cargo install`.
+You can download a pre-compiled version from the [releases](https://github.com/csixteen/honeybee/releases) page. Alternatively, if you have Rust [installed](https://rustup.rs/), you can clone the repository and run `cargo install`.
 
 # Configuration
 
@@ -46,6 +46,12 @@ Just like in the original i3status, the basic idea of honeybee is that you can s
 ### Memory
 
 This module is currently only supported in Linux. It gets memory usage from `/proc/meminfo`.
+
+# Command-line options
+
+```shell
+honeybee --help
+```
 
 # Roadmap
 
