@@ -48,6 +48,7 @@ You can follow the [open issues](https://github.com/csixteen/honeybee/issues) to
 
 # References
 
+- [bumblebee-status](https://github.com/tobi-wan-kenobi/bumblebee-status) - I came across this project when I started doing some research. I tried it out, it looks really nice, but it consumes way more resources that I wanted. I used it as an inspiration mostly for the name.
 - [i3status](https://github.com/i3/i3status) - the original one.
 - [i3status-rust](https://github.com/greshake/i3status-rust) - helped rewrite certain parts in more idiomatic Rust.
 - [procfs](https://github.com/eminence/procfs/blob/master/src/meminfo.rs) - source of inspiration for the `memory` module. I decided to not use this crate because it maintains way more info in memory that I need.
