@@ -1,6 +1,6 @@
 //! i3bar protocol. For full reference, check the main [documentation](https://i3wm.org/docs/i3bar-protocol.html).
 //!
-//! The main structures of this module are `Header, `Block` and `ClickEvent`. This is only relevant
+//! The main structures of this module are `Header`, `Block` and `ClickEvent`. This is only relevant
 //! if you choose `i3bar` as the `output_format`.
 
 use serde::{Deserialize, Serialize};
