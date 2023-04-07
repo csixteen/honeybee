@@ -18,12 +18,15 @@ impl Module {
     }
 }
 
+/// The state of a module.
 #[allow(dead_code)]
 #[derive(Clone, Debug, Default, Eq, PartialEq)]
 enum ModuleState {
     #[default]
     None,
+    /// State of a healthy running module
     Running,
+    /// If there was an error when trying to update.
     Error,
 }
 

@@ -1,7 +1,9 @@
-//! i3bar protocol. For full reference, check the main [documentation](https://i3wm.org/docs/i3bar-protocol.html).
+//! i3bar protocol. For full reference, check the main [documentation].
 //!
-//! The main structures of this module are `Header`, `Block` and `ClickEvent`. This is only relevant
-//! if you choose `i3bar` as the `output_format`.
+//! The main structures of this module are [`Header`], [`Block`] and [`ClickEvent`]. This is only
+//! relevant if you choose [`i3bar`] as the `output_format`.
+//!
+//! [documentation]: https://i3wm.org/docs/i3bar-protocol.html
 
 use serde::{Deserialize, Serialize};
 use serde_with::skip_serializing_none;
@@ -60,6 +62,7 @@ pub enum Markup {
     Pango,
 }
 
+/// Represents the contents of the status line for a particular module.
 #[skip_serializing_none]
 #[derive(Clone, Debug, SmartDefault, Eq, PartialEq, Serialize)]
 pub struct Block {

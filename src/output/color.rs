@@ -1,3 +1,4 @@
+//! Everything needed to manipulate colors.
 use std::fmt::{self, Formatter};
 
 use serde::de::Visitor;
@@ -5,6 +6,8 @@ use serde::{de, Deserialize, Deserializer, Serialize};
 
 use crate::errors::*;
 
+/// A color is a string representing a canonical RGB hexadecimal triplet
+/// with no separator between colors. E.g. `"#FF0000"`.
 #[derive(Clone, Debug, Eq, PartialEq, Serialize)]
 pub struct Color(String);
 

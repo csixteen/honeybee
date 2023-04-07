@@ -1,3 +1,4 @@
+//! Used to control the update interval of modules.
 use std::time::Duration;
 
 use tokio::time::{interval_at, Instant, Interval, MissedTickBehavior};

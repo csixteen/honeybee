@@ -1,3 +1,6 @@
+//! Use ANSI Escape sequences to produce a terminal-output as close as possible to the
+//! graphical outputs. This makes debugging your config file a little bit easier because
+//! the terminal-output becomes much more readable.
 use super::prelude::*;
 
 #[derive(Clone, Debug, Eq, PartialEq)]

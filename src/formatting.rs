@@ -1,3 +1,4 @@
+//! Everything related to format strings, placeholders and value types.
 use std::collections::HashMap;
 use std::fmt::{self, Formatter};
 use std::str::FromStr;
@@ -9,6 +10,7 @@ use smart_default::SmartDefault;
 use crate::errors::*;
 use crate::units::Unit;
 
+/// Format strings for `full_text` and `short_text`.
 #[derive(Clone, Debug, SmartDefault, Eq, PartialEq)]
 pub struct Format {
     pub full_text: Option<String>,
@@ -44,6 +46,8 @@ impl Format {
         }
     }
 
+    /// Replaces the placeholders with the corresponding values in the format strings. Returns
+    /// a tuple with the rendered (`full_text`, `short_text`).
     pub fn render(&self, placeholders: &Option<Placeholders>) -> (String, String) {
         let full_text = Format::render_string(self.full_text.clone(), placeholders);
         let short_text = Format::render_string(self.short_text.clone(), placeholders);
@@ -125,6 +129,8 @@ impl<'de> Deserialize<'de> for Format {
     }
 }
 
+/// Maps specific placeholders to the corresponding values. E.g.
+/// $total => "32 GiB"
 pub type Placeholders = HashMap<String, Value>;
 
 #[derive(Clone, Debug, PartialEq)]

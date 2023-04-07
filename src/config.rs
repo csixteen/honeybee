@@ -1,7 +1,7 @@
-use crate::modules::ModuleConfig;
 use serde::Deserialize;
 use smart_default::SmartDefault;
 
+use crate::modules::ModuleConfig;
 use crate::output::color::Color;
 use crate::protocol::Markup;
 
@@ -15,6 +15,8 @@ pub struct Config {
     pub modules: Vec<ModuleConfig>,
 }
 
+/// These are the values that you'll find/specify at the top-level of the
+/// TOML configuration file.
 #[derive(Clone, Debug, SmartDefault, Eq, PartialEq, Deserialize)]
 #[serde(default)]
 pub struct GeneralConfig {

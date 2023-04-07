@@ -1,3 +1,4 @@
+//! TOML configuration file utilities.
 use std::env;
 use std::ffi::OsString;
 use std::fs;
@@ -24,14 +25,16 @@ where
     })
 }
 
-/// This will try to find the config file path in the following
-/// locations (by order):
+/// If `file` is an absolute path and the file exists, then its
+/// corresponding [`PathBuf`] will be returned. If not, this method
+/// will try to find the config file path in the following locations
+/// (in order):
 ///
-/// 1. $XDG_CONFIG_HOME/honeybee/config.toml
-/// 2. $XDG_DATA_HOME/honeybee/config.toml
-/// 3. $HOME/.honeybee.toml
-/// 4. $XDG_DATA_DIRS/honeybee/config.toml
-/// 5. $XDG_CONFIG_DIRS/honeybee/config.toml
+/// 1. `$XDG_CONFIG_HOME/honeybee/config.toml`
+/// 2. `$XDG_DATA_HOME/honeybee/config.toml`
+/// 3. `$HOME/.honeybee.toml`
+/// 4. `$XDG_DATA_DIRS/honeybee/config.toml`
+/// 5. `$XDG_CONFIG_DIRS/honeybee/config.toml`
 ///
 /// Reference: `<https://wiki.archlinux.org/title/XDG_Base_Directory>`
 pub fn get_config_path(file: &str) -> Option<PathBuf> {

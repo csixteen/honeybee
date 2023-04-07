@@ -1,3 +1,6 @@
+//! [Dzen] is a general purpose messaging, notification and menuing program for X11.
+//!
+//! [Dzen]: https://github.com/robm/dzen
 use super::prelude::*;
 
 #[derive(Clone, Debug, Eq, PartialEq)]
