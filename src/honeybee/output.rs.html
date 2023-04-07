@@ -42,12 +42,12 @@
 <span class="kw">use </span><span class="kw">crate</span>::widget::Widget;
 
 <span class="kw">pub mod </span>color;
-<span class="kw">mod </span>dzen2;
-<span class="kw">mod </span>i3bar;
-<span class="kw">mod </span>lemonbar;
+<span class="kw">pub mod </span>dzen2;
+<span class="kw">pub mod </span>i3bar;
+<span class="kw">pub mod </span>lemonbar;
 <span class="kw">mod </span>prelude;
-<span class="kw">mod </span>term;
-<span class="kw">mod </span>xmobar;
+<span class="kw">pub mod </span>term;
+<span class="kw">pub mod </span>xmobar;
 
 <span class="kw">pub trait </span>OutputFormatter: Debug {
     <span class="kw">fn </span>fg_color(<span class="kw-2">&amp;</span><span class="self">self</span>, config: <span class="kw-2">&amp;</span>GeneralConfig, widget: <span class="kw-2">&amp;</span>Widget) -&gt; String;

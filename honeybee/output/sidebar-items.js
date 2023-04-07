@@ -1,0 +1,1 @@
+window.SIDEBAR_ITEMS = {"fn":[["output_formatter",""]],"mod":[["color",""],["dzen2",""],["i3bar",""],["lemonbar",""],["term",""],["xmobar",""]],"trait":[["OutputFormatter",""]]};

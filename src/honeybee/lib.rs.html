@@ -49,19 +49,19 @@
 <a href="#49" id="49">49</a>
 </pre><pre class="rust"><code><span class="attr">#[allow(clippy::large_enum_variant)]
 </span><span class="kw">pub mod </span>bar;
-<span class="kw">mod </span>bridge;
+<span class="kw">pub mod </span>bridge;
 <span class="kw">pub mod </span>config;
 <span class="kw">pub mod </span>errors;
-<span class="kw">mod </span>formatting;
+<span class="kw">pub mod </span>formatting;
 <span class="kw">mod </span>macros;
 <span class="kw">pub mod </span>modules;
-<span class="kw">pub</span>(<span class="kw">crate</span>) <span class="kw">mod </span>output;
-<span class="kw">mod </span>protocol;
-<span class="kw">pub</span>(<span class="kw">crate</span>) <span class="kw">mod </span>timer;
-<span class="kw">pub</span>(<span class="kw">crate</span>) <span class="kw">mod </span>types;
-<span class="kw">mod </span>units;
+<span class="kw">pub mod </span>output;
+<span class="kw">pub mod </span>protocol;
+<span class="kw">pub mod </span>timer;
+<span class="kw">pub mod </span>types;
+<span class="kw">pub mod </span>units;
 <span class="kw">pub mod </span>utils;
-<span class="kw">mod </span>widget;
+<span class="kw">pub mod </span>widget;
 
 <span class="kw">use </span>clap::Parser;
 
