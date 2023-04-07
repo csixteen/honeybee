@@ -1,1 +1,1 @@
-window.SIDEBAR_ITEMS = {"enum":[["ContentType",""]],"struct":[["Widget","The graphical element that is used to render the output of a module."]]};
+window.SIDEBAR_ITEMS = {"enum":[["ContentType",""],["WidgetState","The state of the widget will define its color value."]],"struct":[["Widget","The graphical element that is used to render the output of a module."]]};
