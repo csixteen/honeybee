@@ -50,7 +50,7 @@ impl Widget {
 
 /// The state of the widget will define its color value.
 #[derive(Clone, Debug, Default, Eq, PartialEq)]
-pub(crate) enum WidgetState {
+pub enum WidgetState {
     #[default]
     Normal,
     Warning,
