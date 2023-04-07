@@ -35,10 +35,12 @@
 <a href="#35" id="35">35</a>
 <a href="#36" id="36">36</a>
 <a href="#37" id="37">37</a>
-</pre><pre class="rust"><code><span class="kw">use </span><span class="kw">crate</span>::modules::ModuleConfig;
-<span class="kw">use </span>serde::Deserialize;
+<a href="#38" id="38">38</a>
+<a href="#39" id="39">39</a>
+</pre><pre class="rust"><code><span class="kw">use </span>serde::Deserialize;
 <span class="kw">use </span>smart_default::SmartDefault;
 
+<span class="kw">use </span><span class="kw">crate</span>::modules::ModuleConfig;
 <span class="kw">use </span><span class="kw">crate</span>::output::color::Color;
 <span class="kw">use </span><span class="kw">crate</span>::protocol::Markup;
 
@@ -52,7 +54,9 @@
     </span><span class="kw">pub </span>modules: Vec&lt;ModuleConfig&gt;,
 }
 
-<span class="attr">#[derive(Clone, Debug, SmartDefault, Eq, PartialEq, Deserialize)]
+<span class="doccomment">/// These are the values that you&#39;ll find/specify at the top-level of the
+/// TOML configuration file.
+</span><span class="attr">#[derive(Clone, Debug, SmartDefault, Eq, PartialEq, Deserialize)]
 #[serde(default)]
 </span><span class="kw">pub struct </span>GeneralConfig {
     <span class="attr">#[default = <span class="string">&quot;i3bar&quot;</span>]

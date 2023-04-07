@@ -23,7 +23,13 @@
 <a href="#23" id="23">23</a>
 <a href="#24" id="24">24</a>
 <a href="#25" id="25">25</a>
-</pre><pre class="rust"><code><span class="kw">use </span><span class="kw">super</span>::prelude::<span class="kw-2">*</span>;
+<a href="#26" id="26">26</a>
+<a href="#27" id="27">27</a>
+<a href="#28" id="28">28</a>
+</pre><pre class="rust"><code><span class="doccomment">//! Use ANSI Escape sequences to produce a terminal-output as close as possible to the
+//! graphical outputs. This makes debugging your config file a little bit easier because
+//! the terminal-output becomes much more readable.
+</span><span class="kw">use </span><span class="kw">super</span>::prelude::<span class="kw-2">*</span>;
 
 <span class="attr">#[derive(Clone, Debug, Eq, PartialEq)]
 </span><span class="kw">pub struct </span>Term;

@@ -1,1 +1,1 @@
-window.SIDEBAR_ITEMS = {"enum":[["Alignment",""],["BlockWidth",""],["Markup",""]],"fn":[["init",""],["status_line",""],["stop",""]],"struct":[["Block",""],["ClickEvent",""],["Header","The first message in the protocol is a header block."]]};
+window.SIDEBAR_ITEMS = {"enum":[["Alignment",""],["BlockWidth",""],["Markup",""]],"fn":[["init",""],["status_line",""],["stop",""]],"struct":[["Block","Represents the contents of the status line for a particular module."],["ClickEvent",""],["Header","The first message in the protocol is a header block."]]};

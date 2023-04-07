@@ -45,6 +45,9 @@
 <a href="#45" id="45">45</a>
 <a href="#46" id="46">46</a>
 <a href="#47" id="47">47</a>
+<a href="#48" id="48">48</a>
+<a href="#49" id="49">49</a>
+<a href="#50" id="50">50</a>
 </pre><pre class="rust"><code><span class="kw">use </span>futures::future::FutureExt;
 <span class="kw">use </span>serde::Deserialize;
 <span class="kw">use </span>smart_default::SmartDefault;
@@ -65,13 +68,16 @@
     }
 }
 
-<span class="attr">#[allow(dead_code)]
+<span class="doccomment">/// The state of a module.
+</span><span class="attr">#[allow(dead_code)]
 #[derive(Clone, Debug, Default, Eq, PartialEq)]
 </span><span class="kw">enum </span>ModuleState {
     <span class="attr">#[default]
     </span><span class="prelude-val">None</span>,
-    Running,
-    Error,
+    <span class="doccomment">/// State of a healthy running module
+    </span>Running,
+    <span class="doccomment">/// If there was an error when trying to update.
+    </span>Error,
 }
 
 <span class="attr">#[derive(Clone, Debug, Deserialize)]

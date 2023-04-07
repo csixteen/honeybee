@@ -72,16 +72,27 @@
 <a href="#72" id="72">72</a>
 <a href="#73" id="73">73</a>
 <a href="#74" id="74">74</a>
-</pre><pre class="rust"><code><span class="kw">use </span>std::fmt;
-<span class="kw">use </span>std::fmt::Formatter;
+<a href="#75" id="75">75</a>
+<a href="#76" id="76">76</a>
+<a href="#77" id="77">77</a>
+<a href="#78" id="78">78</a>
+<a href="#79" id="79">79</a>
+<a href="#80" id="80">80</a>
+</pre><pre class="rust"><code><span class="doccomment">//! Structs and methods to manipulate widgets. A [`Widget`] is a graphical element
+//! that is used to render the output of a [`Module`].
+//!
+//! [`Module`]: crate::modules
+</span><span class="kw">use </span>std::fmt::{<span class="self">self</span>, Formatter};
 
 <span class="kw">use </span><span class="kw">crate</span>::config::GeneralConfig;
 <span class="kw">use </span><span class="kw">crate</span>::formatting::{Format, Placeholders};
 <span class="kw">use </span><span class="kw">crate</span>::output::color::Color;
 
-<span class="attr">#[derive(Clone, Debug, Default)]
+<span class="doccomment">/// The graphical element that is used to render the
+/// output of a module.
+</span><span class="attr">#[derive(Clone, Debug, Default)]
 </span><span class="kw">pub struct </span>Widget {
-    state: WidgetState,
+    <span class="kw">pub </span>state: WidgetState,
     <span class="kw">pub </span>content: ContentType,
 }
 
@@ -117,7 +128,8 @@
     }
 }
 
-<span class="attr">#[derive(Clone, Debug, Default, Eq, PartialEq)]
+<span class="doccomment">/// The state of the widget will define its color value.
+</span><span class="attr">#[derive(Clone, Debug, Default, Eq, PartialEq)]
 </span><span class="kw">pub</span>(<span class="kw">crate</span>) <span class="kw">enum </span>WidgetState {
     <span class="attr">#[default]
     </span>Normal,

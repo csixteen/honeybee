@@ -189,7 +189,14 @@
 <a href="#189" id="189">189</a>
 <a href="#190" id="190">190</a>
 <a href="#191" id="191">191</a>
-</pre><pre class="rust"><code><span class="kw">use </span>std::collections::HashMap;
+<a href="#192" id="192">192</a>
+<a href="#193" id="193">193</a>
+<a href="#194" id="194">194</a>
+<a href="#195" id="195">195</a>
+<a href="#196" id="196">196</a>
+<a href="#197" id="197">197</a>
+</pre><pre class="rust"><code><span class="doccomment">//! Everything related to format strings, placeholders and value types.
+</span><span class="kw">use </span>std::collections::HashMap;
 <span class="kw">use </span>std::fmt::{<span class="self">self</span>, Formatter};
 <span class="kw">use </span>std::str::FromStr;
 
@@ -200,7 +207,8 @@
 <span class="kw">use </span><span class="kw">crate</span>::errors::<span class="kw-2">*</span>;
 <span class="kw">use </span><span class="kw">crate</span>::units::Unit;
 
-<span class="attr">#[derive(Clone, Debug, SmartDefault, Eq, PartialEq)]
+<span class="doccomment">/// Format strings for `full_text` and `short_text`.
+</span><span class="attr">#[derive(Clone, Debug, SmartDefault, Eq, PartialEq)]
 </span><span class="kw">pub struct </span>Format {
     <span class="kw">pub </span>full_text: <span class="prelude-ty">Option</span>&lt;String&gt;,
     <span class="kw">pub </span>short_text: <span class="prelude-ty">Option</span>&lt;String&gt;,
@@ -235,7 +243,9 @@
         }
     }
 
-    <span class="kw">pub fn </span>render(<span class="kw-2">&amp;</span><span class="self">self</span>, placeholders: <span class="kw-2">&amp;</span><span class="prelude-ty">Option</span>&lt;Placeholders&gt;) -&gt; (String, String) {
+    <span class="doccomment">/// Replaces the placeholders with the corresponding values in the format strings. Returns
+    /// a tuple with the rendered (`full_text`, `short_text`).
+    </span><span class="kw">pub fn </span>render(<span class="kw-2">&amp;</span><span class="self">self</span>, placeholders: <span class="kw-2">&amp;</span><span class="prelude-ty">Option</span>&lt;Placeholders&gt;) -&gt; (String, String) {
         <span class="kw">let </span>full_text = Format::render_string(<span class="self">self</span>.full_text.clone(), placeholders);
         <span class="kw">let </span>short_text = Format::render_string(<span class="self">self</span>.short_text.clone(), placeholders);
         (full_text, short_text)
@@ -316,7 +326,9 @@
     }
 }
 
-<span class="kw">pub type </span>Placeholders = HashMap&lt;String, Value&gt;;
+<span class="doccomment">/// Maps specific placeholders to the corresponding values. E.g.
+/// $total =&gt; &quot;32 GiB&quot;
+</span><span class="kw">pub type </span>Placeholders = HashMap&lt;String, Value&gt;;
 
 <span class="attr">#[derive(Clone, Debug, PartialEq)]
 </span><span class="kw">pub enum </span>Value {

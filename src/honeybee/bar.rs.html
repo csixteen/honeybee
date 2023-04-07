@@ -97,7 +97,10 @@
 <a href="#97" id="97">97</a>
 <a href="#98" id="98">98</a>
 <a href="#99" id="99">99</a>
-</pre><pre class="rust"><code><span class="kw">use </span>std::sync::Arc;
+<a href="#100" id="100">100</a>
+<a href="#101" id="101">101</a>
+</pre><pre class="rust"><code><span class="doccomment">//! This is the main container of all the running modules.
+</span><span class="kw">use </span>std::sync::Arc;
 
 <span class="kw">use </span>futures::stream::{FuturesUnordered, StreamExt};
 <span class="kw">use </span>smart_default::SmartDefault;
@@ -189,7 +192,8 @@
     }
 }
 
-<span class="attr">#[derive(Clone, Debug, SmartDefault, Eq, PartialEq)]
+<span class="doccomment">/// A rendered widget can be simply a string or an i3 Block.
+</span><span class="attr">#[derive(Clone, Debug, SmartDefault, Eq, PartialEq)]
 </span><span class="kw">pub enum </span>RenderedWidget {
     <span class="attr">#[default]
     </span><span class="prelude-val">None</span>,

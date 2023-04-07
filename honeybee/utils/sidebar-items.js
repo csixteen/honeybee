@@ -1,1 +1,1 @@
-window.SIDEBAR_ITEMS = {"fn":[["get_config_path","This will try to find the config file path in the following locations (by order):"],["read_toml_config",""]]};
+window.SIDEBAR_ITEMS = {"fn":[["get_config_path","If `file` is an absolute path and the file exists, then its corresponding [`PathBuf`] will be returned. If not, this method will try to find the config file path in the following locations (in order):"],["read_toml_config",""]]};

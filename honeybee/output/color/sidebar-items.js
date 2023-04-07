@@ -1,1 +1,1 @@
-window.SIDEBAR_ITEMS = {"struct":[["Color",""]]};
+window.SIDEBAR_ITEMS = {"struct":[["Color","A color is a string representing a canonical RGB hexadecimal triplet with no separator between colors. E.g. `\"#FF0000\"`."]]};

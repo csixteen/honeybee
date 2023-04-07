@@ -1,1 +1,1 @@
-window.SIDEBAR_ITEMS = {"enum":[["RenderedWidget",""]],"struct":[["Bar",""]]};
+window.SIDEBAR_ITEMS = {"enum":[["RenderedWidget","A rendered widget can be simply a string or an i3 Block."]],"struct":[["Bar",""]]};

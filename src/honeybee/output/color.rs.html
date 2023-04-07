@@ -81,14 +81,20 @@
 <a href="#81" id="81">81</a>
 <a href="#82" id="82">82</a>
 <a href="#83" id="83">83</a>
-</pre><pre class="rust"><code><span class="kw">use </span>std::fmt::{<span class="self">self</span>, Formatter};
+<a href="#84" id="84">84</a>
+<a href="#85" id="85">85</a>
+<a href="#86" id="86">86</a>
+</pre><pre class="rust"><code><span class="doccomment">//! Everything needed to manipulate colors.
+</span><span class="kw">use </span>std::fmt::{<span class="self">self</span>, Formatter};
 
 <span class="kw">use </span>serde::de::Visitor;
 <span class="kw">use </span>serde::{de, Deserialize, Deserializer, Serialize};
 
 <span class="kw">use </span><span class="kw">crate</span>::errors::<span class="kw-2">*</span>;
 
-<span class="attr">#[derive(Clone, Debug, Eq, PartialEq, Serialize)]
+<span class="doccomment">/// A color is a string representing a canonical RGB hexadecimal triplet
+/// with no separator between colors. E.g. `&quot;#FF0000&quot;`.
+</span><span class="attr">#[derive(Clone, Debug, Eq, PartialEq, Serialize)]
 </span><span class="kw">pub struct </span>Color(String);
 
 <span class="kw">impl </span>Default <span class="kw">for </span>Color {
