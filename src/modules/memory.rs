@@ -1,3 +1,44 @@
+//! Memory usage on a Linux system from /proc/meminfo.
+//!
+//! # Configuration
+//!
+//! Key | Description | Values | Default
+//! ----|-------------|--------|--------
+//! `format` | A string used to customize the output of this module | See available placeholders below | `"$percentage_used"`
+//! `format_degraded` | A string to customize the output when state is set to warning | See available placeholders below | `"$percentage_available"`
+//! `threshold_degraded` | Value used to set the state to warning | Possible values are percentages or exact values followed by unit | `"80%"`
+//! `threshold_critical` | Value used to set the state to critical | Possible values are percentages or exact values followed by unit | `"95%"`
+//! `memory_used_method` | Method used to distinguish the actually used memory | See values below | `"classical"`
+//! `unit` | IEC unit to be used | See possible values below | `"GiB"`
+//! `decimals` | Number of decimals in the format placeholder | An integer number | `1`
+//!
+//! Memory used method | Value
+//! -------------------|-------
+//! `classical` | Total memory - free - buffers - cache (matches Gnome system monitor)
+//! `memavailable` | Total memory - MemAvailable (matches the `free` command)
+//!
+//! Placeholder | Value
+//! ------------|-------
+//! `$total` | Total physical RAM available
+//! `$used` | Memory used, based on the chosen method
+//! `$percentage_used` | As above, but percentage
+//! `$free` | The sum of free low memory (Kernel space) and high memory (User space)
+//! `$percentage_free` | As above, but percentage
+//! `$available` | An estimate of how much memory is available for starting new applications, without swapping.
+//! `$percentage_available` | As above, but percentage
+//! `$shared` | Amount of memory consumed in `tmpfs` filesystems.
+//! `$percentage_shared` | As above, but percentage
+//!
+//! # Example
+//! ```toml
+//! [[module]]
+//! module = "memory"
+//! format = "$used"
+//! threshold_degraded = "85%"
+//! threshold_critical = "30 GiB"
+//! unit = "GiB"
+//! ```
+
 use serde::Deserialize;
 use tokio::fs::File;
 use tokio::io::{AsyncBufReadExt, BufReader};
@@ -9,7 +50,9 @@ use super::prelude::*;
 pub struct Config {
     format: Format,
     format_degraded: Format,
+    #[default(Some(String::from("80%")))]
     threshold_degraded: Option<String>,
+    #[default(Some(String::from("95%")))]
     threshold_critical: Option<String>,
     #[default(Some(Default::default()))]
     memory_used_method: Option<MemoryUsedMethod>,

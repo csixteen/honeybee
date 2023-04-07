@@ -3,44 +3,49 @@ This is a port of the original [i3status](https://github.com/i3/i3status) writte
 
 # Motivation
 
-My main motivation is to practice Rust and use more advanced patterns and constructs. I use i3 as a Window Manager, and while searching for a replacement of the default i3status I thought it could actually be a good idea to write my own. I've read the entire [source code](https://github.com/i3/i3status) of the original one (which is written in C) and used it as a starting point. Eventually, I came across [i3status-rust](https://github.com/greshake/i3status-rust), which I used as source of inspiration for some idimatic ways of writing certain parts in Rust, namely proper error handling and macros.
+My main motivation is to practice Rust and use more advanced patterns and constructs. I use i3 as a Window Manager, and while searching for a replacement of the default i3status I thought it could actually be a good idea to write my own. I've read the entire [source code](https://github.com/i3/i3status) of the original one (which is written in C) and used it as a starting point. Eventually, I came across [i3status-rust](https://github.com/greshake/i3status-rust), which I used as source of inspiration for some idiomatic ways of writing certain parts in Rust, namely proper error handling and macros.
 
 Hopefully, soon I'll write an extensive companion blog post.
 
-# Running and testing
+# Getting started
 
-For now, you'll have to clone the repository. Then it's business as usual:
+You can download a pre-compiled version from the [releases](https://github.com/csixteen/honeybee/releases) page. Alternatively, if you have Rust installed, you can clone the repository and run `cargo install`.
 
-```shell
-cargo run
-```
+# Configuration
 
-You can also pass CLI args to it:
-```
-$ cargo run -- --run-once
-    Finished dev [unoptimized + debuginfo] target(s) in 0.03s
-     Running `target/debug/honeybee --run-once`
-{"version":1,"click_events":true}
-[
-  [{"full_text":"4.9 GiB","color":"#00AA00","background":"#000000","border":"#222222","border_top":1,"border_right":1,"border_bottom":1,"border_left":1,"align":"Left","separator":true,"separator_block_width":9,"markup":"None"}]
-]
-```
+Once installed, you can edit the [sample configuration file](examples/config.toml) and copy it to one of the following locations:
 
-If you want to see the available CLI options:
-```shell
-cargo run -- --help
-```
+1. `$XDG_CONFIG_HOME/honeybee/config.toml`
+2. `$XDG_DATA_HOME/honeybee/config.toml`
+3. `$HOME/.honeybee.toml`
+4. `$XDG_DATA_DIRS/honeybee/config.toml`
+5. `$XDG_CONFIG_DIRS/honeybee/config.toml`
 
-If you want to run the (few) tests that exist:
-```shell
-cargo test
-```
+One of the main differences between the original i3status and honeybee is that the latter uses [TOML](https://github.com/toml-lang/toml/) format.
 
-# How to install
+## General configuration
 
-```shell
-cargo install
-```
+At the top-level, you can define the following configuration variables:
+
+| Variable          | Description                                                                                                         | Values                                                                                | Default   |
+|-------------------|---------------------------------------------------------------------------------------------------------------------|---------------------------------------------------------------------------------------|-----------|
+| `output_format`   | Defines the format string used for the output                                                                       | `i3bar`,<br/>`term`,<br/>`xmobar`,<br/>`lemonbar`,<br/>`dzen2`                        | `i3bar`   |
+| `colors`          | Will disable all the colors if set to `false`                                                                       | `true`, `false`                                                                       | `true`    |
+| `separator`       | Separator to use between modules. Set to empty string if you want to disable.                                       |                                                                                       |           |
+| `color_separator` | Color used to paint the separator bar between modules.                                                              | Canonical RGB hexadecimal triplet (with no separator between colors), prefixed by `#` |           |
+| `color_good`      | Color used to display good values.                                                                                  | Same as above                                                                         | `#00FF00` |
+| `color_degraded`  | Color used to display degraded values.                                                                              | Same as above                                                                         | `#FFFF00` |
+| `color_bad`       | Color used to display bad values.                                                                                   | Same as above                                                                         | `#FF0000` |
+| `markup`          | When set to `pango`, you'll be able to use Pango markup and specify font, color, size, etc, in the format strings.  | `pango`, `none`                                                                       | `none`    |
+| `update_interval` | Time, in seconds, that modules will sleep until they update their values. Can be overwritten on a per module basis. | Integer (represents seconds)                                                          | 10        |
+
+## Modules
+
+Just like in the original i3status, the basic idea of honeybee is that you can specify which modules should be used.
+
+### Memory
+
+This module is currently only supported in Linux. It gets memory usage from `/proc/meminfo`.
 
 # Roadmap
 
@@ -51,7 +56,7 @@ You can follow the [open issues](https://github.com/csixteen/honeybee/issues) to
 - [bumblebee-status](https://github.com/tobi-wan-kenobi/bumblebee-status) - I came across this project when I started doing some research. I tried it out, it looks really nice, but it consumes way more resources that I wanted. I used it as an inspiration mostly for the name.
 - [i3status](https://github.com/i3/i3status) - the original one.
 - [i3status-rust](https://github.com/greshake/i3status-rust) - helped rewrite certain parts in more idiomatic Rust.
-- [procfs](https://github.com/eminence/procfs/blob/master/src/meminfo.rs) - source of inspiration for the `memory` module. I decided to not use this crate because it maintains way more info in memory that I need.
+- [procfs](https://github.com/eminence/procfs/blob/master/src/meminfo.rs) - source of inspiration for the `memory` module. I decided to not use this crate because it maintains way more info in memory than I need.
 - [tokio](https://tokio.rs/)
 - [serde](https://serde.rs/)
 - [clap](https://docs.rs/clap/latest/clap/index.html)
