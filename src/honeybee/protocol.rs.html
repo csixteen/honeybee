@@ -117,14 +117,53 @@
 <a href="#117" id="117">117</a>
 <a href="#118" id="118">118</a>
 <a href="#119" id="119">119</a>
-</pre><pre class="rust"><code><span class="kw">use </span>serde::{Deserialize, Serialize};
+<a href="#120" id="120">120</a>
+<a href="#121" id="121">121</a>
+<a href="#122" id="122">122</a>
+<a href="#123" id="123">123</a>
+<a href="#124" id="124">124</a>
+<a href="#125" id="125">125</a>
+<a href="#126" id="126">126</a>
+<a href="#127" id="127">127</a>
+<a href="#128" id="128">128</a>
+<a href="#129" id="129">129</a>
+<a href="#130" id="130">130</a>
+<a href="#131" id="131">131</a>
+<a href="#132" id="132">132</a>
+<a href="#133" id="133">133</a>
+<a href="#134" id="134">134</a>
+<a href="#135" id="135">135</a>
+<a href="#136" id="136">136</a>
+<a href="#137" id="137">137</a>
+<a href="#138" id="138">138</a>
+<a href="#139" id="139">139</a>
+<a href="#140" id="140">140</a>
+<a href="#141" id="141">141</a>
+<a href="#142" id="142">142</a>
+<a href="#143" id="143">143</a>
+<a href="#144" id="144">144</a>
+<a href="#145" id="145">145</a>
+<a href="#146" id="146">146</a>
+<a href="#147" id="147">147</a>
+<a href="#148" id="148">148</a>
+<a href="#149" id="149">149</a>
+<a href="#150" id="150">150</a>
+<a href="#151" id="151">151</a>
+<a href="#152" id="152">152</a>
+</pre><pre class="rust"><code><span class="doccomment">//! i3bar protocol. For full reference, check the main [documentation](https://i3wm.org/docs/i3bar-protocol.html).
+//!
+//! The main structures of this module are `Header, `Block` and `ClickEvent`. This is only relevant
+//! if you choose `i3bar` as the `output_format`.
+
+</span><span class="kw">use </span>serde::{Deserialize, Serialize};
 <span class="kw">use </span>serde_with::skip_serializing_none;
 <span class="kw">use </span>smart_default::SmartDefault;
 
 <span class="kw">use </span><span class="kw">crate</span>::bar::RenderedWidget;
 <span class="kw">use </span><span class="kw">crate</span>::output::color::Color;
 
-<span class="attr">#[skip_serializing_none]
+<span class="doccomment">/// The first message in the protocol is a header block.
+</span><span class="attr">#[skip_serializing_none]
 #[derive(Clone, Debug, SmartDefault, Eq, PartialEq, Serialize)]
 </span><span class="kw">pub struct </span>Header {
     <span class="doccomment">/// The version number (as an integer) of the i3bar protocol you will use.
@@ -153,7 +192,9 @@
 <span class="attr">#[derive(Clone, Debug, Eq, PartialEq, Serialize)]
 </span><span class="kw">pub enum </span>BlockWidth {
     Pixels(usize),
-    Text(String),
+    <span class="doccomment">/// The width of the text will determine the block width
+    /// in pixels.
+    </span>Text(String),
 }
 
 <span class="attr">#[derive(Clone, Debug, SmartDefault, Eq, PartialEq, Serialize)]
@@ -174,32 +215,57 @@
 <span class="attr">#[skip_serializing_none]
 #[derive(Clone, Debug, SmartDefault, Eq, PartialEq, Serialize)]
 </span><span class="kw">pub struct </span>Block {
-    <span class="kw">pub </span>full_text: String,
-    <span class="kw">pub </span>short_text: <span class="prelude-ty">Option</span>&lt;String&gt;,
-    <span class="attr">#[default(<span class="prelude-val">Some</span>(Default::default()))]
+    <span class="doccomment">/// This is the only required key by the protocol. If it&#39;s an empty string,
+    /// then the block will be skipped.
+    </span><span class="kw">pub </span>full_text: String,
+    <span class="doccomment">/// If provided, the `short_text` will be used when the status line needs to be shortened
+    /// (because it uses more space than your screen provides).
+    </span><span class="kw">pub </span>short_text: <span class="prelude-ty">Option</span>&lt;String&gt;,
+    <span class="doccomment">/// The color used to display the contents of `full_text` or `short_text`.
+    </span><span class="attr">#[default(<span class="prelude-val">Some</span>(Default::default()))]
     </span><span class="kw">pub </span>color: <span class="prelude-ty">Option</span>&lt;Color&gt;,
-    <span class="attr">#[default(<span class="prelude-val">Some</span>(Color::try_from(<span class="string">&quot;#000000&quot;</span>).unwrap()))]
+    <span class="doccomment">/// Overrides the background color for this particular block.
+    </span><span class="attr">#[default(<span class="prelude-val">Some</span>(Color::try_from(<span class="string">&quot;#000000&quot;</span>).unwrap()))]
     </span><span class="kw">pub </span>background: <span class="prelude-ty">Option</span>&lt;Color&gt;,
-    <span class="attr">#[default(<span class="prelude-val">Some</span>(Color::try_from(<span class="string">&quot;#222222&quot;</span>).unwrap()))]
+    <span class="doccomment">/// Overrides the border color for this particular block.
+    </span><span class="attr">#[default(<span class="prelude-val">Some</span>(Color::try_from(<span class="string">&quot;#222222&quot;</span>).unwrap()))]
     </span><span class="kw">pub </span>border: <span class="prelude-ty">Option</span>&lt;Color&gt;,
     <span class="attr">#[default(<span class="prelude-val">Some</span>(<span class="number">1</span>))]
+    </span><span class="doccomment">/// Defines the width (in pixels) of the top border of this block.
     </span><span class="kw">pub </span>border_top: <span class="prelude-ty">Option</span>&lt;usize&gt;,
-    <span class="attr">#[default(<span class="prelude-val">Some</span>(<span class="number">1</span>))]
+    <span class="doccomment">/// Defines the width (in pixels) of the right border of this block.
+    </span><span class="attr">#[default(<span class="prelude-val">Some</span>(<span class="number">1</span>))]
     </span><span class="kw">pub </span>border_right: <span class="prelude-ty">Option</span>&lt;usize&gt;,
-    <span class="attr">#[default(<span class="prelude-val">Some</span>(<span class="number">1</span>))]
+    <span class="doccomment">/// Defines the width (in pixels) of the bottom border of this block.
+    </span><span class="attr">#[default(<span class="prelude-val">Some</span>(<span class="number">1</span>))]
     </span><span class="kw">pub </span>border_bottom: <span class="prelude-ty">Option</span>&lt;usize&gt;,
-    <span class="attr">#[default(<span class="prelude-val">Some</span>(<span class="number">1</span>))]
+    <span class="doccomment">/// Defines the width (in pixels) of the left border of this block.
+    </span><span class="attr">#[default(<span class="prelude-val">Some</span>(<span class="number">1</span>))]
     </span><span class="kw">pub </span>border_left: <span class="prelude-ty">Option</span>&lt;usize&gt;,
-    <span class="kw">pub </span>min_width: <span class="prelude-ty">Option</span>&lt;BlockWidth&gt;,
-    <span class="kw">pub </span>align: Alignment,
-    <span class="kw">pub </span>urgent: <span class="prelude-ty">Option</span>&lt;bool&gt;,
-    <span class="kw">pub </span>name: <span class="prelude-ty">Option</span>&lt;String&gt;,
-    <span class="kw">pub </span>instance: <span class="prelude-ty">Option</span>&lt;String&gt;,
-    <span class="attr">#[default(<span class="prelude-val">Some</span>(<span class="bool-val">true</span>))]
+    <span class="doccomment">/// The minimum width, in pixels, of this block. If `full_text` takes less
+    /// space than the `min_width`, then the block will be padded to the left
+    /// and/or right, depending on the `alignment`.
+    </span><span class="kw">pub </span>min_width: <span class="prelude-ty">Option</span>&lt;BlockWidth&gt;,
+    <span class="doccomment">/// Aligns the text on the center, left or right, when the `min_width` is not
+    /// reached.
+    </span><span class="kw">pub </span>align: Alignment,
+    <span class="doccomment">/// Specifies whether the current value is urgent (e.g. no more disk space).
+    </span><span class="kw">pub </span>urgent: <span class="prelude-ty">Option</span>&lt;bool&gt;,
+    <span class="doccomment">/// Unique name of this block, used to identify it in scripts when processing
+    /// the output.
+    </span><span class="kw">pub </span>name: <span class="prelude-ty">Option</span>&lt;String&gt;,
+    <span class="doccomment">/// In case there are multiple instances of a block (e.g. multiple disk space
+    /// blocks for multiple mount points).
+    </span><span class="kw">pub </span>instance: <span class="prelude-ty">Option</span>&lt;String&gt;,
+    <span class="doccomment">/// Indicates whether a separator line should be drawn after this block.
+    </span><span class="attr">#[default(<span class="prelude-val">Some</span>(<span class="bool-val">true</span>))]
     </span><span class="kw">pub </span>separator: <span class="prelude-ty">Option</span>&lt;bool&gt;,
-    <span class="attr">#[default(<span class="prelude-val">Some</span>(<span class="number">9</span>))]
+    <span class="doccomment">/// Amount of pixels to leave blank after the block. Unless `separator` is disabled,
+    /// a separator line will be drawn in the middle of this gap.
+    </span><span class="attr">#[default(<span class="prelude-val">Some</span>(<span class="number">9</span>))]
     </span><span class="kw">pub </span>separator_block_width: <span class="prelude-ty">Option</span>&lt;usize&gt;,
-    <span class="kw">pub </span>markup: Markup,
+    <span class="doccomment">/// Indicates how the block should be parsed.
+    </span><span class="kw">pub </span>markup: Markup,
 }
 
 <span class="kw">impl </span>Block {

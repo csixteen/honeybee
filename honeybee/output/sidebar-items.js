@@ -1,1 +1,1 @@
-window.SIDEBAR_ITEMS = {"fn":[["output_formatter",""]],"mod":[["color",""],["dzen2",""],["i3bar",""],["lemonbar",""],["term",""],["xmobar",""]],"trait":[["OutputFormatter",""]]};
+window.SIDEBAR_ITEMS = {"fn":[["output_formatter",""]],"mod":[["color",""],["dzen2",""],["i3bar","i3bar output format"],["lemonbar",""],["term",""],["xmobar",""]],"trait":[["OutputFormatter",""]]};
