@@ -147,7 +147,7 @@ pub fn status_line(rendered_widgets: &[RenderedWidget]) {
         })
         .collect();
 
-    println!("  {}", serde_json::to_string(&v).unwrap());
+    println!("  {},", serde_json::to_string(&v).unwrap());
 }
 
 pub fn stop() {
