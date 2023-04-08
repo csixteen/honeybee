@@ -6,8 +6,8 @@
 //! ----|-------------|--------|--------
 //! `format` | A string used to customize the output of this module | See available placeholders below | `"$percentage_used"`
 //! `format_degraded` | A string to customize the output when state is set to warning | See available placeholders below | `"$percentage_available"`
-//! `threshold_degraded` | Value used to set the state to warning | Possible values are percentages or exact values followed by unit | `"80%"`
-//! `threshold_critical` | Value used to set the state to critical | Possible values are percentages or exact values followed by unit | `"95%"`
+//! `threshold_degraded` | Value used to set the state to warning, if available memory falls below given value | Possible values are percentages or exact values followed by unit | `"10%"`
+//! `threshold_critical` | Value used to set the state to critical, if available memory falls below given value | Possible values are percentages or exact values followed by unit | `"5%"`
 //! `memory_used_method` | Method used to distinguish the actually used memory | See values below | `"classical"`
 //! `unit` | IEC unit to be used | See possible values below | `"GiB"`
 //! `decimals` | Number of decimals in the format placeholder | An integer number | `1`
@@ -50,9 +50,9 @@ use super::prelude::*;
 pub struct Config {
     format: Format,
     format_degraded: Format,
-    #[default(Some(String::from("80%")))]
+    #[default(Some(String::from("10%")))]
     threshold_degraded: Option<String>,
-    #[default(Some(String::from("95%")))]
+    #[default(Some(String::from("5%")))]
     threshold_critical: Option<String>,
     #[default(Some(Default::default()))]
     memory_used_method: Option<MemoryUsedMethod>,
@@ -121,6 +121,12 @@ pub(crate) async fn run(config: Config, bridge: Bridge) -> Result<()> {
     }
 }
 
+// Convert a string to its absolute representation based on the total
+// memory of `mem_total`.
+//
+// The string can contain any percentage values, which then return the
+// value of `mem_amount` in relation to `mem_total`. Alternatively, an
+// absolute value can be given, suffixed with an IEC symbol.
 fn memory_absolute(mem_amount: &str, mem_total: u64) -> Result<u64> {
     let (digits, unit): (String, String) = mem_amount.chars().partition(|c| c.is_ascii_digit());
     let amount = u64::from_str(&digits).error("Bad threshold string")?;
@@ -129,7 +135,6 @@ fn memory_absolute(mem_amount: &str, mem_total: u64) -> Result<u64> {
         .chars()
         .next()
         .error("Bad threshold string")?;
-
     if unit == '%' {
         Ok(amount * mem_total / 100)
     } else {
