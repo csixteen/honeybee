@@ -53,6 +53,7 @@ impl StdError for Error {}
 
 pub trait ResultExt<T> {
     fn error<M: Into<ErrorMsg>>(self, message: M) -> Result<T>;
+    fn or_error<M: Into<ErrorMsg>, F: FnOnce() -> M>(self, f: F) -> Result<T>;
 }
 
 impl<T, E: StdError + Send + Sync + 'static> ResultExt<T> for Result<T, E> {
@@ -60,6 +61,14 @@ impl<T, E: StdError + Send + Sync + 'static> ResultExt<T> for Result<T, E> {
         self.map_err(|_| Error {
             kind: ErrorKind::Other,
             message: Some(message.into()),
+            source: None,
+        })
+    }
+
+    fn or_error<M: Into<ErrorMsg>, F: FnOnce() -> M>(self, f: F) -> Result<T> {
+        self.map_err(|_| Error {
+            kind: ErrorKind::Other,
+            message: Some(f().into()),
             source: None,
         })
     }

@@ -12,7 +12,6 @@ pub mod bridge;
 pub mod config;
 pub mod errors;
 pub mod formatting;
-mod macros;
 pub mod modules;
 pub mod output;
 pub mod protocol;
@@ -41,7 +40,7 @@ pub struct CliArgs {
     /// 4. `$XDG_DATA_DIRS/honeybee/config.toml`
     ///
     /// 5. `$XDG_CONFIG_DIRS/honeybee/config.toml`
-    #[clap(default_value = "~/.honeybee.toml")]
+    #[clap(default_value = "honeybee.toml")]
     pub config_file: String,
     /// Indicates whether colors will be disabled or not.
     #[arg(long)]
@@ -52,4 +51,67 @@ pub struct CliArgs {
     /// Maximum number of blocking threads used by honeybee.
     #[arg(long, default_value_t = 5)]
     pub num_threads: usize,
+}
+
+#[macro_export]
+macro_rules! map {
+    ($( $key:literal => $value:expr ),* $(,)?) => {{
+        #[allow(unused_mut)]
+        let mut m = ::std::collections::HashMap::new();
+        $(
+        m.insert($key.into(), $value.into());
+        )*
+        m
+    }};
+}
+
+// Reference: https://github.com/greshake/i3status-rust/blob/master/src/blocks.rs#L20
+// I modified slightly, to adapt to my naming convention. Also, I want to be able to
+// conditionally compile certain modules based on the `target_os` as well.
+#[macro_export]
+macro_rules! modules {
+    {
+        $( $(#[cfg($x: ident = $xp : literal)])? $module: ident $(,)? )*
+    } => {
+        $(
+            $(#[cfg($x = $xp)])?
+            $(#[cfg_attr(docsrs, doc(cfg($x = $xp)))])?
+            pub mod $module;
+        )*
+
+        #[derive(Clone, Debug, Deserialize)]
+        #[serde(tag = "module")]
+        #[serde(deny_unknown_fields)]
+        pub enum ModuleConfig {
+            $(
+                $(#[cfg($x = $xp)])?
+                #[allow(non_camel_case_types)]
+                $module {
+                    #[serde(flatten)]
+                    config: $module::Config,
+                },
+            )*
+        }
+
+        impl ModuleConfig {
+            pub fn run(self, bridge: Bridge) -> BoxedFuture<Result<()>> {
+                match self {
+                    $(
+                        $(#[cfg($x = $xp)])?
+                        Self::$module { config } => {
+                            $module::run(config, bridge).boxed_local()
+                        }
+                    )*
+                }
+            }
+        }
+    }
+}
+
+#[macro_export]
+macro_rules! from_str {
+    ($t:tt, $e:expr, $msg:expr) => {{
+        let e = $e;
+        $t::from_str(e).or_error(|| format!("{}", $msg))?
+    }};
 }

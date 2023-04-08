@@ -39,7 +39,6 @@
 //! unit = "GiB"
 //! ```
 
-use serde::Deserialize;
 use tokio::fs::File;
 use tokio::io::{AsyncBufReadExt, BufReader};
 
@@ -129,7 +128,7 @@ pub(crate) async fn run(config: Config, bridge: Bridge) -> Result<()> {
 // absolute value can be given, suffixed with an IEC symbol.
 fn memory_absolute(mem_amount: &str, mem_total: u64) -> Result<u64> {
     let (digits, unit): (String, String) = mem_amount.chars().partition(|c| c.is_ascii_digit());
-    let amount = u64::from_str(&digits).error("Bad threshold string")?;
+    let amount = from_str!(u64, &digits, "Bad threshold string");
     let unit = unit
         .trim_start()
         .chars()
@@ -153,7 +152,7 @@ struct MemInfo {
 }
 
 impl MemInfo {
-    async fn new() -> Result<Self> {
+    pub async fn new() -> Result<Self> {
         let f = File::open("/proc/meminfo")
             .await
             .error("Couldn't open /proc/meminfo")?;
