@@ -221,6 +221,11 @@
 <a href="#221" id="221">221</a>
 <a href="#222" id="222">222</a>
 <a href="#223" id="223">223</a>
+<a href="#224" id="224">224</a>
+<a href="#225" id="225">225</a>
+<a href="#226" id="226">226</a>
+<a href="#227" id="227">227</a>
+<a href="#228" id="228">228</a>
 </pre><pre class="rust"><code><span class="doccomment">//! Memory usage on a Linux system from /proc/meminfo.
 //!
 //! # Configuration
@@ -229,8 +234,8 @@
 //! ----|-------------|--------|--------
 //! `format` | A string used to customize the output of this module | See available placeholders below | `&quot;$percentage_used&quot;`
 //! `format_degraded` | A string to customize the output when state is set to warning | See available placeholders below | `&quot;$percentage_available&quot;`
-//! `threshold_degraded` | Value used to set the state to warning | Possible values are percentages or exact values followed by unit | `&quot;80%&quot;`
-//! `threshold_critical` | Value used to set the state to critical | Possible values are percentages or exact values followed by unit | `&quot;95%&quot;`
+//! `threshold_degraded` | Value used to set the state to warning, if available memory falls below given value | Possible values are percentages or exact values followed by unit | `&quot;10%&quot;`
+//! `threshold_critical` | Value used to set the state to critical, if available memory falls below given value | Possible values are percentages or exact values followed by unit | `&quot;5%&quot;`
 //! `memory_used_method` | Method used to distinguish the actually used memory | See values below | `&quot;classical&quot;`
 //! `unit` | IEC unit to be used | See possible values below | `&quot;GiB&quot;`
 //! `decimals` | Number of decimals in the format placeholder | An integer number | `1`
@@ -273,9 +278,9 @@
 </span><span class="kw">pub struct </span>Config {
     format: Format,
     format_degraded: Format,
-    <span class="attr">#[default(<span class="prelude-val">Some</span>(String::from(<span class="string">&quot;80%&quot;</span>)))]
+    <span class="attr">#[default(<span class="prelude-val">Some</span>(String::from(<span class="string">&quot;10%&quot;</span>)))]
     </span>threshold_degraded: <span class="prelude-ty">Option</span>&lt;String&gt;,
-    <span class="attr">#[default(<span class="prelude-val">Some</span>(String::from(<span class="string">&quot;95%&quot;</span>)))]
+    <span class="attr">#[default(<span class="prelude-val">Some</span>(String::from(<span class="string">&quot;5%&quot;</span>)))]
     </span>threshold_critical: <span class="prelude-ty">Option</span>&lt;String&gt;,
     <span class="attr">#[default(<span class="prelude-val">Some</span>(Default::default()))]
     </span>memory_used_method: <span class="prelude-ty">Option</span>&lt;MemoryUsedMethod&gt;,
@@ -344,7 +349,13 @@
     }
 }
 
-<span class="kw">fn </span>memory_absolute(mem_amount: <span class="kw-2">&amp;</span>str, mem_total: u64) -&gt; <span class="prelude-ty">Result</span>&lt;u64&gt; {
+<span class="comment">// Convert a string to its absolute representation based on the total
+// memory of `mem_total`.
+//
+// The string can contain any percentage values, which then return the
+// value of `mem_amount` in relation to `mem_total`. Alternatively, an
+// absolute value can be given, suffixed with an IEC symbol.
+</span><span class="kw">fn </span>memory_absolute(mem_amount: <span class="kw-2">&amp;</span>str, mem_total: u64) -&gt; <span class="prelude-ty">Result</span>&lt;u64&gt; {
     <span class="kw">let </span>(digits, unit): (String, String) = mem_amount.chars().partition(|c| c.is_ascii_digit());
     <span class="kw">let </span>amount = u64::from_str(<span class="kw-2">&amp;</span>digits).error(<span class="string">&quot;Bad threshold string&quot;</span>)<span class="question-mark">?</span>;
     <span class="kw">let </span>unit = unit
@@ -352,7 +363,6 @@
         .chars()
         .next()
         .error(<span class="string">&quot;Bad threshold string&quot;</span>)<span class="question-mark">?</span>;
-
     <span class="kw">if </span>unit == <span class="string">&#39;%&#39; </span>{
         <span class="prelude-val">Ok</span>(amount * mem_total / <span class="number">100</span>)
     } <span class="kw">else </span>{
