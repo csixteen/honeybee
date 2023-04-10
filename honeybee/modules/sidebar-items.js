@@ -1,1 +1,1 @@
-window.SIDEBAR_ITEMS = {"enum":[["ModuleConfig",""]],"mod":[["memory","Memory usage on a Linux system from /proc/meminfo."]],"struct":[["Module",""]]};
+window.SIDEBAR_ITEMS = {"enum":[["ModuleConfig",""]],"mod":[["battery",""],["memory","Memory usage on a Linux system from /proc/meminfo."]],"struct":[["Module",""]]};

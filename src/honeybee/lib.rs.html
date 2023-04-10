@@ -53,6 +53,68 @@
 <a href="#53" id="53">53</a>
 <a href="#54" id="54">54</a>
 <a href="#55" id="55">55</a>
+<a href="#56" id="56">56</a>
+<a href="#57" id="57">57</a>
+<a href="#58" id="58">58</a>
+<a href="#59" id="59">59</a>
+<a href="#60" id="60">60</a>
+<a href="#61" id="61">61</a>
+<a href="#62" id="62">62</a>
+<a href="#63" id="63">63</a>
+<a href="#64" id="64">64</a>
+<a href="#65" id="65">65</a>
+<a href="#66" id="66">66</a>
+<a href="#67" id="67">67</a>
+<a href="#68" id="68">68</a>
+<a href="#69" id="69">69</a>
+<a href="#70" id="70">70</a>
+<a href="#71" id="71">71</a>
+<a href="#72" id="72">72</a>
+<a href="#73" id="73">73</a>
+<a href="#74" id="74">74</a>
+<a href="#75" id="75">75</a>
+<a href="#76" id="76">76</a>
+<a href="#77" id="77">77</a>
+<a href="#78" id="78">78</a>
+<a href="#79" id="79">79</a>
+<a href="#80" id="80">80</a>
+<a href="#81" id="81">81</a>
+<a href="#82" id="82">82</a>
+<a href="#83" id="83">83</a>
+<a href="#84" id="84">84</a>
+<a href="#85" id="85">85</a>
+<a href="#86" id="86">86</a>
+<a href="#87" id="87">87</a>
+<a href="#88" id="88">88</a>
+<a href="#89" id="89">89</a>
+<a href="#90" id="90">90</a>
+<a href="#91" id="91">91</a>
+<a href="#92" id="92">92</a>
+<a href="#93" id="93">93</a>
+<a href="#94" id="94">94</a>
+<a href="#95" id="95">95</a>
+<a href="#96" id="96">96</a>
+<a href="#97" id="97">97</a>
+<a href="#98" id="98">98</a>
+<a href="#99" id="99">99</a>
+<a href="#100" id="100">100</a>
+<a href="#101" id="101">101</a>
+<a href="#102" id="102">102</a>
+<a href="#103" id="103">103</a>
+<a href="#104" id="104">104</a>
+<a href="#105" id="105">105</a>
+<a href="#106" id="106">106</a>
+<a href="#107" id="107">107</a>
+<a href="#108" id="108">108</a>
+<a href="#109" id="109">109</a>
+<a href="#110" id="110">110</a>
+<a href="#111" id="111">111</a>
+<a href="#112" id="112">112</a>
+<a href="#113" id="113">113</a>
+<a href="#114" id="114">114</a>
+<a href="#115" id="115">115</a>
+<a href="#116" id="116">116</a>
+<a href="#117" id="117">117</a>
 </pre><pre class="rust"><code><span class="doccomment">//! `honeybee` is a port of [i3status], written in Rust. It means that it&#39;s compatible with the
 //! [i3bar protocol], but also generates status line for dzen2,xmobar and lemonbar.
 //!
@@ -67,7 +129,6 @@
 <span class="kw">pub mod </span>config;
 <span class="kw">pub mod </span>errors;
 <span class="kw">pub mod </span>formatting;
-<span class="kw">mod </span>macros;
 <span class="kw">pub mod </span>modules;
 <span class="kw">pub mod </span>output;
 <span class="kw">pub mod </span>protocol;
@@ -96,7 +157,7 @@
     /// 4. `$XDG_DATA_DIRS/honeybee/config.toml`
     ///
     /// 5. `$XDG_CONFIG_DIRS/honeybee/config.toml`
-    </span><span class="attr">#[clap(default_value = <span class="string">&quot;~/.honeybee.toml&quot;</span>)]
+    </span><span class="attr">#[clap(default_value = <span class="string">&quot;honeybee.toml&quot;</span>)]
     </span><span class="kw">pub </span>config_file: String,
     <span class="doccomment">/// Indicates whether colors will be disabled or not.
     </span><span class="attr">#[arg(long)]
@@ -107,6 +168,69 @@
     <span class="doccomment">/// Maximum number of blocking threads used by honeybee.
     </span><span class="attr">#[arg(long, default_value_t = <span class="number">5</span>)]
     </span><span class="kw">pub </span>num_threads: usize,
+}
+
+<span class="attr">#[macro_export]
+</span><span class="macro">macro_rules! </span>map {
+    ($( <span class="macro-nonterminal">$key</span>:literal =&gt; <span class="macro-nonterminal">$value</span>:expr ),* $(,)<span class="question-mark">?</span>) =&gt; {{
+        <span class="attr">#[allow(unused_mut)]
+        </span><span class="kw">let </span><span class="kw-2">mut </span>m = ::std::collections::HashMap::new();
+        $(
+        m.insert(<span class="macro-nonterminal">$key</span>.into(), <span class="macro-nonterminal">$value</span>.into());
+        )*
+        m
+    }};
+}
+
+<span class="comment">// Reference: https://github.com/greshake/i3status-rust/blob/master/src/blocks.rs#L20
+// I modified slightly, to adapt to my naming convention. Also, I want to be able to
+// conditionally compile certain modules based on the `target_os` as well.
+</span><span class="attr">#[macro_export]
+</span><span class="macro">macro_rules! </span>modules {
+    {
+        $( $(<span class="attr">#[cfg(<span class="macro-nonterminal">$x</span>: ident = <span class="macro-nonterminal">$xp </span>: literal)]</span>)<span class="question-mark">? </span><span class="macro-nonterminal">$module</span>: ident $(,)<span class="question-mark">? </span>)*
+    } =&gt; {
+        $(
+            $(<span class="attr">#[cfg(<span class="macro-nonterminal">$x </span>= <span class="macro-nonterminal">$xp</span>)]</span>)<span class="question-mark">?
+            </span>$(<span class="attr">#[cfg_attr(docsrs, doc(cfg(<span class="macro-nonterminal">$x </span>= <span class="macro-nonterminal">$xp</span>)))]</span>)<span class="question-mark">?
+            </span><span class="kw">pub mod </span><span class="macro-nonterminal">$module</span>;
+        )*
+
+        <span class="attr">#[derive(Clone, Debug, Deserialize)]
+        #[serde(tag = <span class="string">&quot;module&quot;</span>)]
+        #[serde(deny_unknown_fields)]
+        </span><span class="kw">pub enum </span>ModuleConfig {
+            $(
+                $(<span class="attr">#[cfg(<span class="macro-nonterminal">$x </span>= <span class="macro-nonterminal">$xp</span>)]</span>)<span class="question-mark">?
+                </span><span class="attr">#[allow(non_camel_case_types)]
+                </span><span class="macro-nonterminal">$module </span>{
+                    <span class="attr">#[serde(flatten)]
+                    </span>config: <span class="macro-nonterminal">$module::Config</span>,
+                },
+            )*
+        }
+
+        <span class="kw">impl </span>ModuleConfig {
+            <span class="kw">pub fn </span>run(<span class="self">self</span>, bridge: Bridge) -&gt; BoxedFuture&lt;<span class="prelude-ty">Result</span>&lt;()&gt;&gt; {
+                <span class="kw">match </span><span class="self">self </span>{
+                    $(
+                        $(<span class="attr">#[cfg(<span class="macro-nonterminal">$x </span>= <span class="macro-nonterminal">$xp</span>)]</span>)<span class="question-mark">?
+                        </span><span class="self">Self</span>::<span class="macro-nonterminal">$module </span>{ config } =&gt; {
+                            <span class="macro-nonterminal">$module::run</span>(config, bridge).boxed_local()
+                        }
+                    )*
+                }
+            }
+        }
+    }
+}
+
+<span class="attr">#[macro_export]
+</span><span class="macro">macro_rules! </span>from_str {
+    (<span class="macro-nonterminal">$t</span>:tt, <span class="macro-nonterminal">$e</span>:expr, <span class="macro-nonterminal">$msg</span>:expr) =&gt; {{
+        <span class="kw">let </span>e = <span class="macro-nonterminal">$e</span>;
+        <span class="macro-nonterminal">$t::from_str</span>(e).or_error(|| <span class="macro">format!</span>(<span class="string">&quot;{}&quot;</span>, <span class="macro-nonterminal">$msg</span>))<span class="question-mark">?
+    </span>}};
 }
 </code></pre></div>
 </section></main><div id="rustdoc-vars" data-root-path="../../" data-static-root-path="../../static.files/" data-current-crate="honeybee" data-themes="" data-resource-suffix="" data-rustdoc-version="1.68.2 (9eb3afe9e 2023-03-27)" data-search-js="search-98d53477a794af0b.js" data-settings-js="settings-c3c521c753752a1a.js" data-settings-css="settings-08ddfdda51b8ee2e.css" ></div></body></html>
