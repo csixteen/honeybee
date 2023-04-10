@@ -5,6 +5,8 @@ use std::fs;
 use std::path::{Path, PathBuf};
 
 use serde::de::DeserializeOwned;
+use tokio::fs::File;
+use tokio::io::BufReader;
 
 use crate::errors::*;
 
@@ -96,4 +98,14 @@ fn xdg_dirs(env_var: &str, xs: Vec<Option<PathBuf>>) -> Vec<Option<PathBuf>> {
             .map(|p| dirs_sys::is_absolute_path(OsString::from(p)))
             .collect(),
     }
+}
+
+pub async fn buffered_reader<P>(path: P) -> Result<BufReader<File>>
+where
+    P: AsRef<Path> + Copy + std::fmt::Display,
+{
+    let f = File::open(path)
+        .await
+        .or_error(|| format!("Couldn't open {path}"))?;
+    Ok(BufReader::new(f))
 }

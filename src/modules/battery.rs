@@ -1,7 +1,6 @@
 use std::str::FromStr;
 
-use tokio::fs::File;
-use tokio::io::{AsyncBufReadExt, BufReader};
+use tokio::io::{AsyncBufReadExt, AsyncRead, BufReader};
 
 use super::prelude::*;
 
@@ -39,7 +38,8 @@ pub(crate) async fn run(mut config: Config, bridge: Bridge) -> Result<()> {
         widget.set_state(WidgetState::Normal);
         widget.set_format(format.clone());
 
-        let psi = PowerSupplyInfo::new(&path).await?;
+        let reader = buffered_reader(&path).await?;
+        let psi = PowerSupplyInfo::new(reader).await?;
 
         widget.set_placeholders(map!(
             "$status" => Value::Text(battery_status(&config, &psi).to_owned())
@@ -91,28 +91,27 @@ struct PowerSupplyInfo {
 impl PowerSupplyInfo {
     /// Reference: https://www.kernel.org/doc/html/latest/power/power_supply_class.html
     #[cfg(target_os = "linux")]
-    async fn new(path: &str) -> Result<Self> {
-        let f = File::open(path)
-            .await
-            .or_error(|| format!("Couldn't open {path}"))?;
-        let mut file_reader = BufReader::new(f);
+    async fn new<T>(mut reader: BufReader<T>) -> Result<Self>
+    where
+        T: AsyncRead + Unpin,
+    {
         let mut info = PowerSupplyInfo::default();
         let mut line = String::new();
         let mut watt_as_unit = false;
         let mut voltage = -1;
 
         // Ok(0) means that EOF was reached
-        while file_reader
+        while reader
             .read_line(&mut line)
             .await
-            .or_error(|| format!("Couldn't read {path}"))?
+            .error("Error reading line.")?
             != 0
         {
             if line.is_empty() {
                 continue;
             }
 
-            let mut s = line.split("=");
+            let mut s = line.trim().split('=');
             let field = s.next().error("No field")?;
             let value = s.next().error("No value")?;
 
@@ -131,7 +130,9 @@ impl PowerSupplyInfo {
                 "POWER_SUPPLY_CAPACITY" => info.percentage_remaining = from_str!(i32, value, field),
                 "POWER_SUPPLY_CURRENT_NOW" => info.present_rate = from_str!(f64, value, field),
                 // Momentary power supply voltage value.
-                "POWER_SUPPLY_VOLTAGE_NOW" => voltage = from_str!(i32, value, field),
+                "POWER_SUPPLY_VOLTAGE_NOW" => {
+                    voltage = from_str!(i64, value, format!("{field} / {value}"))
+                }
                 // Seconds left for battery to be considered empty (i.e. while
                 // battery powers a load)
                 "POWER_SUPPLY_TIME_TO_EMPTY_NOW" => {
@@ -153,6 +154,8 @@ impl PowerSupplyInfo {
                 }
                 _ => (),
             }
+
+            line.clear();
         }
 
         if !watt_as_unit && voltage >= 0 {
@@ -219,5 +222,41 @@ impl From<&str> for ChargingStatus {
             "Full" => Self::Full,
             _ => Self::Unknown,
         }
+    }
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+    use std::io::Cursor;
+
+    #[tokio::test]
+    async fn test_power_supply() {
+        let raw = vec![
+            "POWER_SUPPLY_NAME=BAT0",
+            "POWER_SUPPLY_TYPE=Battery",
+            "POWER_SUPPLY_STATUS=Discharging",
+            "POWER_SUPPLY_PRESENT=1",
+            "POWER_SUPPLY_TECHNOLOGY=Li-poly",
+            "POWER_SUPPLY_CYCLE_COUNT=0",
+            "POWER_SUPPLY_VOLTAGE_MIN_DESIGN=11550000",
+            "POWER_SUPPLY_VOLTAGE_NOW=11358000",
+            "POWER_SUPPLY_CURRENT_NOW=278000",
+            "POWER_SUPPLY_CHARGE_FULL_DESIGN=4687000",
+            "POWER_SUPPLY_CHARGE_FULL=4687000",
+            "POWER_SUPPLY_CHARGE_NOW=1762000",
+            "POWER_SUPPLY_CAPACITY=37",
+            "POWER_SUPPLY_CAPACITY_LEVEL=Normal",
+            "POWER_SUPPLY_MODEL_NAME=DELL J7H5M26",
+            "POWER_SUPPLY_MANUFACTURER=SMP",
+            "POWER_SUPPLY_SERIAL_NUMBER=1390",
+        ]
+        .join("\n");
+        let data = raw.as_bytes();
+        let input = Cursor::new(data);
+        let reader = BufReader::new(input);
+        let psi = PowerSupplyInfo::new(reader).await.unwrap();
+        assert_eq!(psi.percentage_remaining, 37);
+        assert_eq!(psi.status, ChargingStatus::Discharging);
     }
 }
