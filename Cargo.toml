@@ -8,7 +8,9 @@ edition = "2021"
 license = "MIT"
 authors = ["Pedro Rodrigues <csixteen@proton.me>"]
 
-# See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
+[package.metadata.docs.rs]
+all-features = true
+rustdoc-args = ["--cfg", "docsrs"]
 
 [dependencies]
 dirs = "5.0"

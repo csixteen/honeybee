@@ -4,9 +4,9 @@ use smart_default::SmartDefault;
 
 use crate::bridge::Bridge;
 use crate::errors::*;
+use crate::modules;
 use crate::types::BoxedFuture;
 
-pub mod memory;
 mod prelude;
 
 #[derive(Clone, Debug, SmartDefault)]
@@ -30,21 +30,8 @@ enum ModuleState {
     Error,
 }
 
-#[derive(Clone, Debug, Deserialize)]
-#[serde(tag = "module")]
-#[serde(deny_unknown_fields)]
-pub enum ModuleConfig {
-    #[allow(non_camel_case_types)]
-    memory {
-        #[serde(flatten)]
-        config: memory::Config,
-    },
-}
-
-impl ModuleConfig {
-    pub fn run(self, bridge: Bridge) -> BoxedFuture<Result<()>> {
-        match self {
-            ModuleConfig::memory { config } => memory::run(config, bridge).boxed_local(),
-        }
-    }
-}
+modules!(
+    battery,
+    #[cfg(target_os = "linux")]
+    memory
+);
