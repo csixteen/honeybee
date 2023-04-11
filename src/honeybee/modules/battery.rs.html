@@ -568,7 +568,7 @@
         <span class="kw">let </span>input = Cursor::new(data);
         <span class="kw">let </span>reader = BufReader::new(input);
         <span class="kw">let </span>psi = PowerSupplyInfo::new(reader, <span class="bool-val">false</span>).<span class="kw">await</span>.unwrap();
-        <span class="macro">assert_eq!</span>(psi.percentage_remaining, <span class="number">37</span>);
+        <span class="macro">assert_eq!</span>(psi.percentage_remaining, <span class="number">37.59334328995092</span>);
         <span class="macro">assert_eq!</span>(psi.status, ChargingStatus::Discharging);
     }
 }
