@@ -1,4 +1,4 @@
-//! TOML configuration file utilities.
+//! Utilities, mostly to manipulate files.
 use std::env;
 use std::ffi::OsString;
 use std::fs;
