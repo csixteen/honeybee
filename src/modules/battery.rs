@@ -39,10 +39,11 @@ pub(crate) async fn run(mut config: Config, bridge: Bridge) -> Result<()> {
         widget.set_format(format.clone());
 
         let reader = buffered_reader(&path).await?;
-        let psi = PowerSupplyInfo::new(reader).await?;
+        let psi = PowerSupplyInfo::new(reader, config.last_full_capacity).await?;
 
         widget.set_placeholders(map!(
-            "$status" => Value::Text(battery_status(&config, &psi).to_owned())
+            "$status" => Value::Text(battery_status(&config, &psi).to_owned()),
+            "$percentage" => Value::percentage(psi.percentage_remaining),
         ));
 
         bridge.set_widget(widget.clone()).await?;
@@ -74,24 +75,22 @@ pub enum ThresholdType {
 #[derive(Debug, Clone, SmartDefault)]
 struct PowerSupplyInfo {
     #[default(-1_f64)]
-    full_design: f64,
-    #[default(-1_f64)]
-    full_last: f64,
+    full: f64,
     #[default(-1_f64)]
     remaining: f64,
     #[default(-1_f64)]
     present_rate: f64,
     #[default(-1)]
     seconds_remaining: i32,
-    #[default(-1)]
-    percentage_remaining: i32,
+    #[default(-1_f64)]
+    percentage_remaining: f64,
     status: ChargingStatus,
 }
 
 impl PowerSupplyInfo {
     /// Reference: https://www.kernel.org/doc/html/latest/power/power_supply_class.html
     #[cfg(target_os = "linux")]
-    async fn new<T>(mut reader: BufReader<T>) -> Result<Self>
+    async fn new<T>(mut reader: BufReader<T>, last_full_capacity: bool) -> Result<Self>
     where
         T: AsyncRead + Unpin,
     {
@@ -99,6 +98,9 @@ impl PowerSupplyInfo {
         let mut line = String::new();
         let mut watt_as_unit = false;
         let mut voltage = -1;
+        let mut pct_remaining: i32 = -1;
+        let mut full_design = -1_f64;
+        let mut full_last = -1_f64;
 
         // Ok(0) means that EOF was reached
         while reader
@@ -119,15 +121,21 @@ impl PowerSupplyInfo {
                 // Momentary energy value
                 "POWER_SUPPLY_ENERGY_NOW" => {
                     watt_as_unit = true;
-                    info.remaining = from_str!(f64, value, field)
+                    info.remaining = from_str!(f64, value, field);
+                    pct_remaining = -1;
                 }
                 // Momentary charge value
                 "POWER_SUPPLY_CHARGE_NOW" => {
                     watt_as_unit = false;
-                    info.remaining = from_str!(f64, value, field)
+                    info.remaining = from_str!(f64, value, field);
+                    pct_remaining = -1;
                 }
                 // Attribute represents capacity in percents (from 0 to 100)
-                "POWER_SUPPLY_CAPACITY" => info.percentage_remaining = from_str!(i32, value, field),
+                "POWER_SUPPLY_CAPACITY" => {
+                    if info.remaining == -1_f64 {
+                        pct_remaining = from_str!(i32, value, field)
+                    }
+                }
                 "POWER_SUPPLY_CURRENT_NOW" => info.present_rate = from_str!(f64, value, field),
                 // Momentary power supply voltage value.
                 "POWER_SUPPLY_VOLTAGE_NOW" => {
@@ -144,13 +152,13 @@ impl PowerSupplyInfo {
                 // Design charge and energy values, respectively, when battery
                 // considered full.
                 "POWER_SUPPLY_CHARGE_FULL_DESIGN" | "POWER_SUPPLY_ENERGY_FULL_DESIGN" => {
-                    info.full_design = from_str!(f64, value, field)
+                    full_design = from_str!(f64, value, field)
                 }
                 // Last remembered value of energy and charge, respectively, when battery
                 // became full. These attributes represent real thresholds, not design
                 // values (i.e. depend on conditions such temperature or age).
                 "POWER_SUPPLY_ENERGY_FULL" | "POWER_SUPPLY_CHARGE_FULL" => {
-                    info.full_last = from_str!(f64, value, field)
+                    full_last = from_str!(f64, value, field)
                 }
                 _ => (),
             }
@@ -167,13 +175,30 @@ impl PowerSupplyInfo {
             if info.remaining > 0_f64 {
                 info.remaining = (voltage / 1000_f64) * (info.remaining / 1000_f64);
             }
-            if info.full_design > 0_f64 {
-                info.full_design = (voltage / 1000_f64) * (info.full_design / 1000_f64);
+            if full_design > 0_f64 {
+                full_design = (voltage / 1000_f64) * (full_design / 1000_f64);
             }
-            if info.full_last > 0_f64 {
-                info.full_last = (voltage / 1000_f64) * (info.full_last / 1000_f64);
+            if full_last > 0_f64 {
+                full_last = (voltage / 1000_f64) * (full_last / 1000_f64);
             }
         }
+
+        info.full = if full_design <= 0_f64 || (last_full_capacity && full_last > 0_f64) {
+            full_last
+        } else {
+            full_design
+        };
+
+        info.percentage_remaining = if pct_remaining < 0 {
+            let p = (info.remaining / info.full) * 100_f64;
+            if last_full_capacity && p > 100_f64 {
+                100_f64
+            } else {
+                p
+            }
+        } else {
+            pct_remaining as f64
+        };
 
         Ok(info)
     }
@@ -255,7 +280,7 @@ mod tests {
         let data = raw.as_bytes();
         let input = Cursor::new(data);
         let reader = BufReader::new(input);
-        let psi = PowerSupplyInfo::new(reader).await.unwrap();
+        let psi = PowerSupplyInfo::new(reader, false).await.unwrap();
         assert_eq!(psi.percentage_remaining, 37);
         assert_eq!(psi.status, ChargingStatus::Discharging);
     }
