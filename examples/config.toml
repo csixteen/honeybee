@@ -12,9 +12,10 @@ full = "$used"
 [[module]]
 module = "battery"
 number = 0
-path = "/sys/class/power_supply/BAT%d/uevent"
 format = "$status $percentage $remaining"
 format_down = "No battery"
 status_chr = "⚇ CHR"
 status_bat = "⚡ BAT"
 status_full = "☻ FULL"
+low_threshold = 50
+threshold_type = "percentage"
