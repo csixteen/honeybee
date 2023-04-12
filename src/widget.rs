@@ -48,7 +48,8 @@ impl Widget {
     }
 }
 
-/// The state of the widget will define its color value.
+/// The state of the widget will define its color value, which can be
+/// either `color_good`, `color_degraded` or `color_bad`.
 #[derive(Clone, Debug, Default, Eq, PartialEq)]
 pub enum WidgetState {
     #[default]

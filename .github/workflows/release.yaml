@@ -11,10 +11,10 @@ jobs:
       matrix:
         target:
           - x86_64-unknown-linux-musl
-          - x86_64-unknown-netbsd
-          - x86_64-unknown-freebsd
-          - x86_64-unknown-openbsd
-          - x86_64-unknown-dragonfly
+          #- x86_64-unknown-netbsd
+          #- x86_64-unknown-freebsd
+          #- x86_64-unknown-openbsd
+          #- x86_64-unknown-dragonfly
     steps:
       - uses: actions/checkout@master
       - name: Compile and release

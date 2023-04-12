@@ -3,7 +3,7 @@ name = "honeybee"
 description = "A port of the original i3status written in Rust."
 repository = "https://github.com/csixteen/honeybee/"
 readme = "README.md"
-version = "0.2.2"
+version = "0.3.0"
 edition = "2021"
 license = "MIT"
 authors = ["Pedro Rodrigues <csixteen@proton.me>"]
@@ -27,6 +27,11 @@ toml = "0.7"
 version = "4.2"
 default-features = false
 features = ["std", "derive", "help", "usage"]
+
+[dependencies.chrono]
+version = "0.4"
+default-features = false
+features = ["std", "clock"]
 
 [dependencies.serde]
 version = "1.0"
