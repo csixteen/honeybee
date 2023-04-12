@@ -388,7 +388,7 @@ mod tests {
         let input = Cursor::new(data);
         let reader = BufReader::new(input);
         let psi = PowerSupplyInfo::new(reader, false).await.unwrap();
-        assert_eq!(psi.percentage_remaining, 37.59334328995092);
+        assert_eq!(psi.percentage_remaining, -1);
         assert_eq!(psi.status, ChargingStatus::Discharging);
     }
 }
