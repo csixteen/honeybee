@@ -285,8 +285,156 @@
 <a href="#285" id="285">285</a>
 <a href="#286" id="286">286</a>
 <a href="#287" id="287">287</a>
-</pre><pre class="rust"><code><span class="kw">use </span>std::str::FromStr;
+<a href="#288" id="288">288</a>
+<a href="#289" id="289">289</a>
+<a href="#290" id="290">290</a>
+<a href="#291" id="291">291</a>
+<a href="#292" id="292">292</a>
+<a href="#293" id="293">293</a>
+<a href="#294" id="294">294</a>
+<a href="#295" id="295">295</a>
+<a href="#296" id="296">296</a>
+<a href="#297" id="297">297</a>
+<a href="#298" id="298">298</a>
+<a href="#299" id="299">299</a>
+<a href="#300" id="300">300</a>
+<a href="#301" id="301">301</a>
+<a href="#302" id="302">302</a>
+<a href="#303" id="303">303</a>
+<a href="#304" id="304">304</a>
+<a href="#305" id="305">305</a>
+<a href="#306" id="306">306</a>
+<a href="#307" id="307">307</a>
+<a href="#308" id="308">308</a>
+<a href="#309" id="309">309</a>
+<a href="#310" id="310">310</a>
+<a href="#311" id="311">311</a>
+<a href="#312" id="312">312</a>
+<a href="#313" id="313">313</a>
+<a href="#314" id="314">314</a>
+<a href="#315" id="315">315</a>
+<a href="#316" id="316">316</a>
+<a href="#317" id="317">317</a>
+<a href="#318" id="318">318</a>
+<a href="#319" id="319">319</a>
+<a href="#320" id="320">320</a>
+<a href="#321" id="321">321</a>
+<a href="#322" id="322">322</a>
+<a href="#323" id="323">323</a>
+<a href="#324" id="324">324</a>
+<a href="#325" id="325">325</a>
+<a href="#326" id="326">326</a>
+<a href="#327" id="327">327</a>
+<a href="#328" id="328">328</a>
+<a href="#329" id="329">329</a>
+<a href="#330" id="330">330</a>
+<a href="#331" id="331">331</a>
+<a href="#332" id="332">332</a>
+<a href="#333" id="333">333</a>
+<a href="#334" id="334">334</a>
+<a href="#335" id="335">335</a>
+<a href="#336" id="336">336</a>
+<a href="#337" id="337">337</a>
+<a href="#338" id="338">338</a>
+<a href="#339" id="339">339</a>
+<a href="#340" id="340">340</a>
+<a href="#341" id="341">341</a>
+<a href="#342" id="342">342</a>
+<a href="#343" id="343">343</a>
+<a href="#344" id="344">344</a>
+<a href="#345" id="345">345</a>
+<a href="#346" id="346">346</a>
+<a href="#347" id="347">347</a>
+<a href="#348" id="348">348</a>
+<a href="#349" id="349">349</a>
+<a href="#350" id="350">350</a>
+<a href="#351" id="351">351</a>
+<a href="#352" id="352">352</a>
+<a href="#353" id="353">353</a>
+<a href="#354" id="354">354</a>
+<a href="#355" id="355">355</a>
+<a href="#356" id="356">356</a>
+<a href="#357" id="357">357</a>
+<a href="#358" id="358">358</a>
+<a href="#359" id="359">359</a>
+<a href="#360" id="360">360</a>
+<a href="#361" id="361">361</a>
+<a href="#362" id="362">362</a>
+<a href="#363" id="363">363</a>
+<a href="#364" id="364">364</a>
+<a href="#365" id="365">365</a>
+<a href="#366" id="366">366</a>
+<a href="#367" id="367">367</a>
+<a href="#368" id="368">368</a>
+<a href="#369" id="369">369</a>
+<a href="#370" id="370">370</a>
+<a href="#371" id="371">371</a>
+<a href="#372" id="372">372</a>
+<a href="#373" id="373">373</a>
+<a href="#374" id="374">374</a>
+<a href="#375" id="375">375</a>
+<a href="#376" id="376">376</a>
+<a href="#377" id="377">377</a>
+<a href="#378" id="378">378</a>
+<a href="#379" id="379">379</a>
+<a href="#380" id="380">380</a>
+<a href="#381" id="381">381</a>
+<a href="#382" id="382">382</a>
+<a href="#383" id="383">383</a>
+<a href="#384" id="384">384</a>
+<a href="#385" id="385">385</a>
+<a href="#386" id="386">386</a>
+<a href="#387" id="387">387</a>
+<a href="#388" id="388">388</a>
+<a href="#389" id="389">389</a>
+<a href="#390" id="390">390</a>
+<a href="#391" id="391">391</a>
+<a href="#392" id="392">392</a>
+<a href="#393" id="393">393</a>
+<a href="#394" id="394">394</a>
+</pre><pre class="rust"><code><span class="doccomment">//! Gets the status (charging, discharging, unknown, full), percentage, remaining time and
+//! power consumption (in Watts) of the given battery and when it&#39;s estimated to be empty.
+//!
+//! # Configuration
+//!
+//! Key | Description | Values | Default
+//! ----|-------------|--------|--------
+//! `number` | Battery index as reported in `/sys` | An integer | 0
+//! `path` | Set this property if your battery is represented in a non-standard path in `/sys`. The first occurrence of `%d` gets replaced with `number`, but you can also hardcode the battery index in the path | String representing a path | `&quot;/sys/class/power_supply/BAT%d/uevent&quot;`
+//! `format` | A string used to customize the output of this module | See available placeholders below | `&quot;$status $percentage $remaining&quot;`
+//! `format_down` | A string to customize the output when there are no metrics | A string of UTF-8 characters | `&quot;No battery&quot;`
+//! `status_chr` | Custom string to represent `charging` state. | String with any UTF-8 symbols | `&quot;CHR&quot;`
+//! `status_bat` | same as above, but for `discharging`. | same as above | `&quot;BAT&quot;`
+//! `status_unk` | same as above, but for `unknown` | same as above | `&quot;UNK&quot;`
+//! `status_full` | same as above, but for `full` | same as above | `&quot;FULL&quot;`
+//! `low_threshold` | Causes the widget state to change to [`WidgetState::Critical`] | Integer | `10`
+//! `threshold_type` | An integer representing either time or percentage. If you define `percentage` and your battery percentage goes below `low_threshold`, the widget state will change accordingly. | `time`, `percentage` | `percentage`
+//!
+//! Placeholder | Value
+//! ------------|-------
+//! `$status` | Status (charging, discharging, unknown, full) of the battery. Will be replaced by one of the `status_*` properties defined above.
+//! `$percentage` | Battery left percentage
+//! `$remaining` | Remaining time
+//! `$emptytime` | Time when it&#39;s estimated to be empty
+//! `$consumption` | Power consumption in Watts
+//!
+//! # Example
+//! ```toml
+//! [[module]]
+//! module = &quot;battery&quot;
+//! number = 0
+//! format = &quot;$status $percentage $remaining&quot;
+//! format_down = &quot;No battery&quot;
+//! status_chr = &quot;⚇ CHR&quot;
+//! status_bat = &quot;⚡ BAT&quot;
+//! status_full = &quot;☻ FULL&quot;
+//! low_threshold = 20
+//! threshold_type = &quot;percentage&quot;
+//! ```
+//!
+</span><span class="kw">use </span>std::str::FromStr;
 
+<span class="kw">use </span>chrono::{prelude::<span class="kw-2">*</span>, Duration};
 <span class="kw">use </span>tokio::io::{AsyncBufReadExt, AsyncRead, BufReader};
 
 <span class="kw">use </span><span class="kw">super</span>::prelude::<span class="kw-2">*</span>;
@@ -294,44 +442,57 @@
 <span class="attr">#[derive(Clone, Debug, SmartDefault, PartialEq, Deserialize)]
 #[serde(default)]
 </span><span class="kw">pub struct </span>Config {
-    number: usize,
-    path: String,
+    <span class="attr">#[default = <span class="number">0</span>]
+    </span><span class="kw">pub </span>number: usize,
+    <span class="attr">#[default(<span class="string">&quot;/sys/class/power_supply/BAT%d/uevent&quot;</span>)]
+    </span><span class="kw">pub </span>path: String,
     <span class="attr">#[default(Format::new().with_default(<span class="string">&quot;$status $percentage $remaining&quot;</span>))]
-    </span>format: Format,
+    </span><span class="kw">pub </span>format: Format,
     <span class="attr">#[default(Format::new().with_default(<span class="string">&quot;No battery&quot;</span>))]
-    </span>format_down: Format,
+    </span><span class="kw">pub </span>format_down: Format,
     <span class="attr">#[default(<span class="string">&quot;CHR&quot;</span>.into())]
-    </span>status_chr: String,
+    </span><span class="kw">pub </span>status_chr: String,
     <span class="attr">#[default(<span class="string">&quot;BAT&quot;</span>.into())]
-    </span>status_bat: String,
+    </span><span class="kw">pub </span>status_bat: String,
     <span class="attr">#[default(<span class="string">&quot;UNK&quot;</span>.into())]
-    </span>status_unk: String,
+    </span><span class="kw">pub </span>status_unk: String,
     <span class="attr">#[default(<span class="string">&quot;FULL&quot;</span>.into())]
-    </span>status_full: String,
-    low_threshold: usize,
-    threshold_type: ThresholdType,
+    </span><span class="kw">pub </span>status_full: String,
+    <span class="attr">#[default(<span class="number">10</span>)]
+    </span><span class="kw">pub </span>low_threshold: i64,
+    <span class="kw">pub </span>threshold_type: ThresholdType,
     last_full_capacity: bool,
-    format_percentage: Format,
     hide_seconds: bool,
 }
 
-<span class="kw">pub</span>(<span class="kw">crate</span>) <span class="kw">async fn </span>run(<span class="kw-2">mut </span>config: Config, bridge: Bridge) -&gt; <span class="prelude-ty">Result</span>&lt;()&gt; {
+<span class="kw">pub</span>(<span class="kw">crate</span>) <span class="kw">async fn </span>run(config: Config, bridge: Bridge) -&gt; <span class="prelude-ty">Result</span>&lt;()&gt; {
     <span class="kw">let </span><span class="kw-2">mut </span>widget = Widget::new();
-    <span class="kw">let </span>format = std::mem::take(<span class="kw-2">&amp;mut </span>config.format);
     <span class="kw">let </span><span class="kw-2">mut </span>timer = bridge.timer().start();
     <span class="kw">let </span>path = config.path.replace(<span class="string">&quot;%d&quot;</span>, <span class="kw-2">&amp;</span>config.number.to_string());
 
     <span class="kw">loop </span>{
-        widget.set_state(WidgetState::Normal);
-        widget.set_format(format.clone());
-
         <span class="kw">let </span>reader = buffered_reader(<span class="kw-2">&amp;</span>path).<span class="kw">await</span><span class="question-mark">?</span>;
         <span class="kw">let </span>psi = PowerSupplyInfo::new(reader, config.last_full_capacity).<span class="kw">await</span><span class="question-mark">?</span>;
+        <span class="kw">let </span>bi = BatteryInfo::from(<span class="kw-2">&amp;</span>psi);
 
-        widget.set_placeholders(<span class="macro">map!</span>(
-            <span class="string">&quot;$status&quot; </span>=&gt; Value::Text(battery_status(<span class="kw-2">&amp;</span>config, <span class="kw-2">&amp;</span>psi).to_owned()),
-            <span class="string">&quot;$percentage&quot; </span>=&gt; Value::percentage(psi.percentage_remaining),
-        ));
+        <span class="kw">if </span>bi.full &lt;= <span class="number">0 </span>&amp;&amp; psi.remaining &lt;= <span class="number">0 </span>&amp;&amp; psi.percentage_remaining &lt;= <span class="number">0 </span>{
+            widget.set_format(config.format_down.clone());
+        } <span class="kw">else </span>{
+            widget.set_format(config.format.clone());
+            widget.set_state(<span class="kw">if </span>is_battery_low(<span class="kw-2">&amp;</span>config, <span class="kw-2">&amp;</span>bi) {
+                WidgetState::Critical
+            } <span class="kw">else </span>{
+                WidgetState::Normal
+            });
+
+            widget.set_placeholders(<span class="macro">map!</span>(
+                <span class="string">&quot;$status&quot; </span>=&gt; Value::Text(battery_status(<span class="kw-2">&amp;</span>config, <span class="kw-2">&amp;</span>bi).to_owned()),
+                <span class="string">&quot;$percentage&quot; </span>=&gt; Value::percentage(bi.percentage_remaining),
+                <span class="string">&quot;$remaining&quot; </span>=&gt; Value::Text(bi.time_remaining),
+                <span class="string">&quot;$emptytime&quot; </span>=&gt; Value::Text(bi.empty_time),
+                <span class="string">&quot;$consumption&quot; </span>=&gt; Value::Text(bi.consumption)
+            ));
+        }
 
         bridge.set_widget(widget.clone()).<span class="kw">await</span><span class="question-mark">?</span>;
 
@@ -343,35 +504,127 @@
     }
 }
 
-<span class="kw">fn </span>battery_status&lt;<span class="lifetime">&#39;a</span>&gt;(config: <span class="kw-2">&amp;</span><span class="lifetime">&#39;a </span>Config, info: <span class="kw-2">&amp;</span>PowerSupplyInfo) -&gt; <span class="kw-2">&amp;</span><span class="lifetime">&#39;a </span>str {
+<span class="kw">fn </span>is_battery_low(config: <span class="kw-2">&amp;</span>Config, bi: <span class="kw-2">&amp;</span>BatteryInfo) -&gt; bool {
+    <span class="kw">if </span>config.low_threshold &lt;= <span class="number">0 </span>|| bi.status != ChargingStatus::Discharging {
+        <span class="kw">return </span><span class="bool-val">false</span>;
+    }
+
+    <span class="kw">match </span>config.threshold_type {
+        ThresholdType::Percentage <span class="kw">if </span>bi.percentage_remaining &gt;= <span class="number">0_f64 </span>=&gt; {
+            (bi.percentage_remaining <span class="kw">as </span>i64) &lt; config.low_threshold
+        }
+        ThresholdType::Time <span class="kw">if </span>bi.seconds_remaining &gt;= <span class="number">0_f64 </span>=&gt; {
+            (bi.seconds_remaining <span class="kw">as </span>i64) &lt; <span class="number">60 </span>* config.low_threshold
+        }
+        <span class="kw">_ </span>=&gt; <span class="bool-val">false</span>,
+    }
+}
+
+<span class="kw">fn </span>battery_status&lt;<span class="lifetime">&#39;a</span>&gt;(config: <span class="kw-2">&amp;</span><span class="lifetime">&#39;a </span>Config, info: <span class="kw-2">&amp;</span>BatteryInfo) -&gt; <span class="kw-2">&amp;</span><span class="lifetime">&#39;a </span>str {
     <span class="kw">match </span>info.status {
         ChargingStatus::Unknown =&gt; <span class="kw-2">&amp;</span>config.status_unk,
         ChargingStatus::Charging =&gt; <span class="kw-2">&amp;</span>config.status_chr,
-        ChargingStatus::Discharging | ChargingStatus::NotCharging =&gt; <span class="kw-2">&amp;</span>config.status_bat,
+        ChargingStatus::Discharging =&gt; <span class="kw-2">&amp;</span>config.status_bat,
         ChargingStatus::Full =&gt; <span class="kw-2">&amp;</span>config.status_full,
     }
 }
 
 <span class="attr">#[derive(Clone, Debug, SmartDefault, PartialEq, Deserialize)]
+#[serde(rename_all = <span class="string">&quot;lowercase&quot;</span>)]
 </span><span class="kw">pub enum </span>ThresholdType {
     Time,
     <span class="attr">#[default]
     </span>Percentage,
 }
 
+<span class="attr">#[derive(Clone, Debug, SmartDefault)]
+</span><span class="kw">struct </span>BatteryInfo {
+    full: i64,
+    status: ChargingStatus,
+    percentage_remaining: f64,
+    seconds_remaining: f64,
+    time_remaining: String,
+    empty_time: String,
+    consumption: String,
+}
+
+<span class="kw">impl </span>From&lt;<span class="kw-2">&amp;</span>PowerSupplyInfo&gt; <span class="kw">for </span>BatteryInfo {
+    <span class="kw">fn </span>from(psi: <span class="kw-2">&amp;</span>PowerSupplyInfo) -&gt; <span class="self">Self </span>{
+        <span class="kw">let </span><span class="kw-2">mut </span>bi = BatteryInfo::default();
+        bi.status = psi.status;
+
+        bi.full = <span class="kw">if </span>psi.full_design &lt;= <span class="number">0 </span>|| (psi.last_full_capacity &amp;&amp; psi.full_last &gt; <span class="number">0</span>) {
+            psi.full_last
+        } <span class="kw">else </span>{
+            psi.full_design
+        };
+
+        bi.percentage_remaining = <span class="kw">if </span>psi.percentage_remaining &lt; <span class="number">0 </span>{
+            <span class="kw">let </span>p = (psi.remaining <span class="kw">as </span>f64 / bi.full <span class="kw">as </span>f64) * <span class="number">100_f64</span>;
+            <span class="kw">if </span>psi.last_full_capacity &amp;&amp; p &gt; <span class="number">100_f64 </span>{
+                <span class="number">100_f64
+            </span>} <span class="kw">else </span>{
+                p
+            }
+        } <span class="kw">else </span>{
+            psi.percentage_remaining <span class="kw">as </span>f64
+        };
+
+        bi.seconds_remaining = <span class="kw">if </span>psi.seconds_remaining &lt; <span class="number">0
+            </span>&amp;&amp; psi.present_rate &gt; <span class="number">0
+            </span>&amp;&amp; bi.status != ChargingStatus::Full
+        {
+            <span class="kw">match </span>bi.status {
+                ChargingStatus::Charging =&gt; {
+                    (<span class="number">3600 </span>* (bi.full - psi.remaining)) <span class="kw">as </span>f64 / psi.present_rate <span class="kw">as </span>f64
+                }
+                ChargingStatus::Discharging =&gt; {
+                    (<span class="number">3600 </span>* psi.remaining) <span class="kw">as </span>f64 / psi.present_rate <span class="kw">as </span>f64
+                }
+                <span class="kw">_ </span>=&gt; <span class="number">0_f64</span>,
+            }
+        } <span class="kw">else </span>{
+            psi.seconds_remaining <span class="kw">as </span>f64
+        };
+
+        bi.empty_time = {
+            <span class="kw">let </span>et = Local::now() + Duration::seconds(bi.seconds_remaining <span class="kw">as </span>i64);
+            <span class="macro">format!</span>(<span class="string">&quot;{}&quot;</span>, et.format(<span class="string">&quot;%H:%M:%S&quot;</span>))
+        };
+
+        <span class="kw">if </span>bi.seconds_remaining &gt;= <span class="number">0_f64 </span>{
+            <span class="kw">let </span>hours = (bi.seconds_remaining / <span class="number">3600_f64</span>) <span class="kw">as </span>i64;
+            <span class="kw">let </span><span class="kw-2">mut </span>seconds = bi.seconds_remaining <span class="kw">as </span>i64 - (hours * <span class="number">3600</span>);
+            <span class="kw">let </span>minutes = seconds / <span class="number">60</span>;
+            seconds -= minutes * <span class="number">60</span>;
+            bi.time_remaining = <span class="macro">format!</span>(<span class="string">&quot;{:02}:{:02}:{:02}&quot;</span>, hours, minutes, seconds);
+        }
+
+        bi.consumption = <span class="macro">format!</span>(<span class="string">&quot;{:1.2}W&quot;</span>, psi.present_rate <span class="kw">as </span>f64 / <span class="number">1.0E+6_f64</span>);
+
+        bi
+    }
+}
+
 <span class="attr">#[derive(Debug, Clone, SmartDefault)]
 </span><span class="kw">struct </span>PowerSupplyInfo {
-    <span class="attr">#[default(-<span class="number">1_f64</span>)]
-    </span>full: f64,
-    <span class="attr">#[default(-<span class="number">1_f64</span>)]
-    </span>remaining: f64,
-    <span class="attr">#[default(-<span class="number">1_f64</span>)]
-    </span>present_rate: f64,
+    <span class="attr">#[default(-<span class="number">1</span>)]
+    </span>full_last: i64,
+    <span class="attr">#[default(-<span class="number">1</span>)]
+    </span>full_design: i64,
+    <span class="attr">#[default(-<span class="number">1</span>)]
+    </span>remaining: i64,
+    <span class="attr">#[default(-<span class="number">1</span>)]
+    </span>present_rate: i64,
     <span class="attr">#[default(-<span class="number">1</span>)]
     </span>seconds_remaining: i32,
-    <span class="attr">#[default(-<span class="number">1_f64</span>)]
-    </span>percentage_remaining: f64,
+    <span class="attr">#[default(-<span class="number">1</span>)]
+    </span>voltage: i64,
+    <span class="attr">#[default(-<span class="number">1</span>)]
+    </span>percentage_remaining: i32,
     status: ChargingStatus,
+    watt_as_unit: bool,
+    last_full_capacity: bool,
 }
 
 <span class="kw">impl </span>PowerSupplyInfo {
@@ -381,13 +634,12 @@
     <span class="kw">where
         </span>T: AsyncRead + Unpin,
     {
-        <span class="kw">let </span><span class="kw-2">mut </span>info = PowerSupplyInfo::default();
+        <span class="kw">let </span><span class="kw-2">mut </span>info = PowerSupplyInfo {
+            last_full_capacity,
+            ..Default::default()
+        };
+
         <span class="kw">let </span><span class="kw-2">mut </span>line = String::new();
-        <span class="kw">let </span><span class="kw-2">mut </span>watt_as_unit = <span class="bool-val">false</span>;
-        <span class="kw">let </span><span class="kw-2">mut </span>voltage = -<span class="number">1</span>;
-        <span class="kw">let </span><span class="kw-2">mut </span>pct_remaining: i32 = -<span class="number">1</span>;
-        <span class="kw">let </span><span class="kw-2">mut </span>full_design = -<span class="number">1_f64</span>;
-        <span class="kw">let </span><span class="kw-2">mut </span>full_last = -<span class="number">1_f64</span>;
 
         <span class="comment">// Ok(0) means that EOF was reached
         </span><span class="kw">while </span>reader
@@ -407,85 +659,49 @@
             <span class="kw">match </span>field {
                 <span class="comment">// Momentary energy value
                 </span><span class="string">&quot;POWER_SUPPLY_ENERGY_NOW&quot; </span>=&gt; {
-                    watt_as_unit = <span class="bool-val">true</span>;
-                    info.remaining = <span class="macro">from_str!</span>(f64, value, field);
-                    pct_remaining = -<span class="number">1</span>;
+                    info.watt_as_unit = <span class="bool-val">true</span>;
+                    info.remaining = <span class="macro">from_str!</span>(i64, value, field);
+                    info.percentage_remaining = -<span class="number">1</span>;
                 }
                 <span class="comment">// Momentary charge value
                 </span><span class="string">&quot;POWER_SUPPLY_CHARGE_NOW&quot; </span>=&gt; {
-                    watt_as_unit = <span class="bool-val">false</span>;
-                    info.remaining = <span class="macro">from_str!</span>(f64, value, field);
-                    pct_remaining = -<span class="number">1</span>;
+                    info.watt_as_unit = <span class="bool-val">false</span>;
+                    info.remaining = <span class="macro">from_str!</span>(i64, value, field);
+                    info.percentage_remaining = -<span class="number">1</span>;
                 }
                 <span class="comment">// Attribute represents capacity in percents (from 0 to 100)
                 </span><span class="string">&quot;POWER_SUPPLY_CAPACITY&quot; </span>=&gt; {
-                    <span class="kw">if </span>info.remaining == -<span class="number">1_f64 </span>{
-                        pct_remaining = <span class="macro">from_str!</span>(i32, value, field)
+                    <span class="kw">if </span>info.remaining == -<span class="number">1 </span>{
+                        info.percentage_remaining = <span class="macro">from_str!</span>(i32, value, field)
                     }
                 }
-                <span class="string">&quot;POWER_SUPPLY_CURRENT_NOW&quot; </span>=&gt; info.present_rate = <span class="macro">from_str!</span>(f64, value, field),
+                <span class="string">&quot;POWER_SUPPLY_CURRENT_NOW&quot; </span>=&gt; info.present_rate = <span class="macro">from_str!</span>(i64, value, field),
                 <span class="comment">// Momentary power supply voltage value.
-                </span><span class="string">&quot;POWER_SUPPLY_VOLTAGE_NOW&quot; </span>=&gt; {
-                    voltage = <span class="macro">from_str!</span>(i64, value, <span class="macro">format!</span>(<span class="string">&quot;{field} / {value}&quot;</span>))
-                }
+                </span><span class="string">&quot;POWER_SUPPLY_VOLTAGE_NOW&quot; </span>=&gt; info.voltage = <span class="macro">from_str!</span>(i64, value, field),
                 <span class="comment">// Seconds left for battery to be considered empty (i.e. while
                 // battery powers a load)
                 </span><span class="string">&quot;POWER_SUPPLY_TIME_TO_EMPTY_NOW&quot; </span>=&gt; {
-                    info.seconds_remaining = <span class="macro">from_str!</span>(i32, value, field)
-                }
-                <span class="string">&quot;POWER_SUPPLY_POWER_NOW&quot; </span>=&gt; info.present_rate = <span class="macro">from_str!</span>(f64, value, field),
+                    info.seconds_remaining = <span class="macro">from_str!</span>(i32, value, field) * <span class="number">60
+                </span>}
+                <span class="string">&quot;POWER_SUPPLY_POWER_NOW&quot; </span>=&gt; info.present_rate = <span class="macro">from_str!</span>(i64, value, field),
                 <span class="comment">// See [`ChargingStatus`]
                 </span><span class="string">&quot;POWER_SUPPLY_STATUS&quot; </span>=&gt; info.status = ChargingStatus::from(value),
                 <span class="comment">// Design charge and energy values, respectively, when battery
                 // considered full.
                 </span><span class="string">&quot;POWER_SUPPLY_CHARGE_FULL_DESIGN&quot; </span>| <span class="string">&quot;POWER_SUPPLY_ENERGY_FULL_DESIGN&quot; </span>=&gt; {
-                    full_design = <span class="macro">from_str!</span>(f64, value, field)
+                    info.full_design = <span class="macro">from_str!</span>(i64, value, field)
                 }
                 <span class="comment">// Last remembered value of energy and charge, respectively, when battery
                 // became full. These attributes represent real thresholds, not design
                 // values (i.e. depend on conditions such temperature or age).
                 </span><span class="string">&quot;POWER_SUPPLY_ENERGY_FULL&quot; </span>| <span class="string">&quot;POWER_SUPPLY_CHARGE_FULL&quot; </span>=&gt; {
-                    full_last = <span class="macro">from_str!</span>(f64, value, field)
+                    info.full_last = <span class="macro">from_str!</span>(i64, value, field)
                 }
                 <span class="kw">_ </span>=&gt; (),
             }
 
             line.clear();
         }
-
-        <span class="kw">if </span>!watt_as_unit &amp;&amp; voltage &gt;= <span class="number">0 </span>{
-            <span class="kw">let </span>voltage = voltage <span class="kw">as </span>f64;
-
-            <span class="kw">if </span>info.present_rate &gt; <span class="number">0_f64 </span>{
-                info.present_rate = (voltage / <span class="number">1000_f64</span>) * (info.present_rate / <span class="number">1000_f64</span>);
-            }
-            <span class="kw">if </span>info.remaining &gt; <span class="number">0_f64 </span>{
-                info.remaining = (voltage / <span class="number">1000_f64</span>) * (info.remaining / <span class="number">1000_f64</span>);
-            }
-            <span class="kw">if </span>full_design &gt; <span class="number">0_f64 </span>{
-                full_design = (voltage / <span class="number">1000_f64</span>) * (full_design / <span class="number">1000_f64</span>);
-            }
-            <span class="kw">if </span>full_last &gt; <span class="number">0_f64 </span>{
-                full_last = (voltage / <span class="number">1000_f64</span>) * (full_last / <span class="number">1000_f64</span>);
-            }
-        }
-
-        info.full = <span class="kw">if </span>full_design &lt;= <span class="number">0_f64 </span>|| (last_full_capacity &amp;&amp; full_last &gt; <span class="number">0_f64</span>) {
-            full_last
-        } <span class="kw">else </span>{
-            full_design
-        };
-
-        info.percentage_remaining = <span class="kw">if </span>pct_remaining &lt; <span class="number">0 </span>{
-            <span class="kw">let </span>p = (info.remaining / info.full) * <span class="number">100_f64</span>;
-            <span class="kw">if </span>last_full_capacity &amp;&amp; p &gt; <span class="number">100_f64 </span>{
-                <span class="number">100_f64
-            </span>} <span class="kw">else </span>{
-                p
-            }
-        } <span class="kw">else </span>{
-            pct_remaining <span class="kw">as </span>f64
-        };
 
         <span class="prelude-val">Ok</span>(info)
     }
@@ -515,13 +731,12 @@
 /// `POWER_SUPPLY_STATUS_*`, as defined in [`power_supply.h`].
 ///
 /// [`power_supply.h`]: https://github.com/torvalds/linux/blob/master/include/linux/power_supply.h
-</span><span class="attr">#[derive(Clone, Debug, SmartDefault, Eq, PartialEq)]
+</span><span class="attr">#[derive(Clone, Copy, Debug, SmartDefault, Eq, PartialEq)]
 </span><span class="kw">pub enum </span>ChargingStatus {
     Unknown,
     Charging,
     <span class="attr">#[default]
     </span>Discharging,
-    NotCharging,
     Full,
 }
 
@@ -529,8 +744,7 @@
     <span class="kw">fn </span>from(status: <span class="kw-2">&amp;</span>str) -&gt; <span class="self">Self </span>{
         <span class="kw">match </span>status {
             <span class="string">&quot;Charging&quot; </span>=&gt; <span class="self">Self</span>::Charging,
-            <span class="string">&quot;Discharging&quot; </span>=&gt; <span class="self">Self</span>::Discharging,
-            <span class="string">&quot;Not charging&quot; </span>=&gt; <span class="self">Self</span>::NotCharging,
+            <span class="string">&quot;Discharging&quot; </span>| <span class="string">&quot;Not charging&quot; </span>=&gt; <span class="self">Self</span>::Discharging,
             <span class="string">&quot;Full&quot; </span>=&gt; <span class="self">Self</span>::Full,
             <span class="kw">_ </span>=&gt; <span class="self">Self</span>::Unknown,
         }

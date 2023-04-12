@@ -78,6 +78,7 @@
 <a href="#78" id="78">78</a>
 <a href="#79" id="79">79</a>
 <a href="#80" id="80">80</a>
+<a href="#81" id="81">81</a>
 </pre><pre class="rust"><code><span class="doccomment">//! Structs and methods to manipulate widgets. A [`Widget`] is a graphical element
 //! that is used to render the output of a [`Module`].
 //!
@@ -128,7 +129,8 @@
     }
 }
 
-<span class="doccomment">/// The state of the widget will define its color value.
+<span class="doccomment">/// The state of the widget will define its color value, which can be
+/// either `color_good`, `color_degraded` or `color_bad`.
 </span><span class="attr">#[derive(Clone, Debug, Default, Eq, PartialEq)]
 </span><span class="kw">pub enum </span>WidgetState {
     <span class="attr">#[default]
