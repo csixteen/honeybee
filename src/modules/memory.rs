@@ -99,11 +99,11 @@ pub(crate) async fn run(config: Config, bridge: Bridge) -> Result<()> {
         );
 
         widget.set_placeholders(map!(
-            "$total" => Value::byte(meminfo.ram_total, unit.clone(), decimals),
-            "$used" => Value::byte(ram_used, unit.clone(), decimals),
-            "$free" => Value::byte(meminfo.ram_free, unit.clone(), decimals),
-            "$available" => Value::byte(meminfo.ram_available, unit.clone(), decimals),
-            "$shared" => Value::byte(meminfo.ram_shared, unit.clone(), decimals),
+            "$total" => Value::byte(meminfo.ram_total, unit, decimals),
+            "$used" => Value::byte(ram_used, unit, decimals),
+            "$free" => Value::byte(meminfo.ram_free, unit, decimals),
+            "$available" => Value::byte(meminfo.ram_available, unit, decimals),
+            "$shared" => Value::byte(meminfo.ram_shared, unit, decimals),
             "$percentage_free" => Value::percentage(100_f64 * (meminfo.ram_free as f64 / meminfo.ram_total as f64)),
             "$percentage_available" => Value::percentage(100_f64 * (meminfo.ram_available as f64 / meminfo.ram_total as f64)),
             "$percentage_used" => Value::percentage(100_f64 * (ram_used as f64 / meminfo.ram_total as f64)),

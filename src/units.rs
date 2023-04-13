@@ -5,7 +5,7 @@ use smart_default::SmartDefault;
 
 use crate::errors::Error;
 
-#[derive(Clone, Debug, SmartDefault, Eq, PartialEq, Deserialize)]
+#[derive(Clone, Copy, Debug, SmartDefault, Eq, PartialEq, Deserialize)]
 pub enum Unit {
     #[default]
     Auto,
@@ -30,7 +30,7 @@ impl fmt::Display for Unit {
 }
 
 impl Unit {
-    pub fn from_bytes(bytes: u64, target: Unit, decimals: usize) -> f64 {
+    pub fn from_bytes(bytes: u64, target: Unit) -> f64 {
         let d: f64 = match target {
             Unit::KiB => 1024_f64,
             Unit::MiB => 1048576_f64,
@@ -39,7 +39,7 @@ impl Unit {
             _ => 1_f64,
         };
 
-        (bytes as f64 / d).truncate(decimals)
+        bytes as f64 / d
     }
 
     pub fn convert_to_bytes(amount: u64, unit: Unit) -> u64 {
@@ -77,23 +77,5 @@ impl TryFrom<&str> for Unit {
             "auto" => Ok(Unit::Auto),
             _ => Unit::try_from(value.chars().next().unwrap()),
         }
-    }
-}
-
-pub trait Truncate<T> {
-    fn truncate(self, n: usize) -> T;
-}
-
-impl Truncate<f32> for f32 {
-    fn truncate(self, n: usize) -> f32 {
-        let x = 10.0_f32.powf(n as f32);
-        f32::trunc(self * x) / x
-    }
-}
-
-impl Truncate<f64> for f64 {
-    fn truncate(self, n: usize) -> f64 {
-        let x = 10.0_f64.powf(n as f64);
-        f64::trunc(self * x) / x
     }
 }

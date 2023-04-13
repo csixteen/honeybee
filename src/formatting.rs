@@ -157,9 +157,10 @@ impl fmt::Display for Value {
                 decimals,
             } => write!(
                 f,
-                "{} {}",
-                Unit::from_bytes(*value, unit.clone(), *decimals),
-                unit
+                "{0:.2$} {1}",
+                Unit::from_bytes(*value, *unit),
+                unit,
+                decimals
             ),
         }
     }
