@@ -36,6 +36,13 @@ impl Error {
             source: None,
         }
     }
+
+    pub fn with_source(self, source: Arc<dyn StdError>) -> Self {
+        Self {
+            source: Some(source),
+            ..self
+        }
+    }
 }
 
 impl fmt::Display for Error {

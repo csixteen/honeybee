@@ -33,5 +33,6 @@ enum ModuleState {
 modules!(
     battery,
     #[cfg(target_os = "linux")]
-    memory
+    memory,
+    time
 );

@@ -1,6 +1,7 @@
 output_format = "i3bar"
 colors = true
 color_good = "#00AA00"
+markup = "pango"
 
 [[module]]
 module = "memory"
@@ -19,3 +20,7 @@ status_bat = "⚡ BAT"
 status_full = "☻ FULL"
 low_threshold = 50
 threshold_type = "percentage"
+
+[[module]]
+module = "time"
+format = "%Y-%m-%d %H:%M %Z"
