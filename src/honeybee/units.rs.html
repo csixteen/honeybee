@@ -79,24 +79,6 @@
 <a href="#79" id="79">79</a>
 <a href="#80" id="80">80</a>
 <a href="#81" id="81">81</a>
-<a href="#82" id="82">82</a>
-<a href="#83" id="83">83</a>
-<a href="#84" id="84">84</a>
-<a href="#85" id="85">85</a>
-<a href="#86" id="86">86</a>
-<a href="#87" id="87">87</a>
-<a href="#88" id="88">88</a>
-<a href="#89" id="89">89</a>
-<a href="#90" id="90">90</a>
-<a href="#91" id="91">91</a>
-<a href="#92" id="92">92</a>
-<a href="#93" id="93">93</a>
-<a href="#94" id="94">94</a>
-<a href="#95" id="95">95</a>
-<a href="#96" id="96">96</a>
-<a href="#97" id="97">97</a>
-<a href="#98" id="98">98</a>
-<a href="#99" id="99">99</a>
 </pre><pre class="rust"><code><span class="kw">use </span>std::fmt::{<span class="self">self</span>, Formatter};
 
 <span class="kw">use </span>serde::Deserialize;
@@ -104,7 +86,7 @@
 
 <span class="kw">use </span><span class="kw">crate</span>::errors::Error;
 
-<span class="attr">#[derive(Clone, Debug, SmartDefault, Eq, PartialEq, Deserialize)]
+<span class="attr">#[derive(Clone, Copy, Debug, SmartDefault, Eq, PartialEq, Deserialize)]
 </span><span class="kw">pub enum </span>Unit {
     <span class="attr">#[default]
     </span>Auto,
@@ -129,7 +111,7 @@
 }
 
 <span class="kw">impl </span>Unit {
-    <span class="kw">pub fn </span>from_bytes(bytes: u64, target: Unit, decimals: usize) -&gt; f64 {
+    <span class="kw">pub fn </span>from_bytes(bytes: u64, target: Unit) -&gt; f64 {
         <span class="kw">let </span>d: f64 = <span class="kw">match </span>target {
             Unit::KiB =&gt; <span class="number">1024_f64</span>,
             Unit::MiB =&gt; <span class="number">1048576_f64</span>,
@@ -138,7 +120,7 @@
             <span class="kw">_ </span>=&gt; <span class="number">1_f64</span>,
         };
 
-        (bytes <span class="kw">as </span>f64 / d).truncate(decimals)
+        bytes <span class="kw">as </span>f64 / d
     }
 
     <span class="kw">pub fn </span>convert_to_bytes(amount: u64, unit: Unit) -&gt; u64 {
@@ -176,24 +158,6 @@
             <span class="string">&quot;auto&quot; </span>=&gt; <span class="prelude-val">Ok</span>(Unit::Auto),
             <span class="kw">_ </span>=&gt; Unit::try_from(value.chars().next().unwrap()),
         }
-    }
-}
-
-<span class="kw">pub trait </span>Truncate&lt;T&gt; {
-    <span class="kw">fn </span>truncate(<span class="self">self</span>, n: usize) -&gt; T;
-}
-
-<span class="kw">impl </span>Truncate&lt;f32&gt; <span class="kw">for </span>f32 {
-    <span class="kw">fn </span>truncate(<span class="self">self</span>, n: usize) -&gt; f32 {
-        <span class="kw">let </span>x = <span class="number">10.0_f32</span>.powf(n <span class="kw">as </span>f32);
-        f32::trunc(<span class="self">self </span>* x) / x
-    }
-}
-
-<span class="kw">impl </span>Truncate&lt;f64&gt; <span class="kw">for </span>f64 {
-    <span class="kw">fn </span>truncate(<span class="self">self</span>, n: usize) -&gt; f64 {
-        <span class="kw">let </span>x = <span class="number">10.0_f64</span>.powf(n <span class="kw">as </span>f64);
-        f64::trunc(<span class="self">self </span>* x) / x
     }
 }
 </code></pre></div>

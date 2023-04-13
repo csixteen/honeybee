@@ -326,11 +326,11 @@
         );
 
         widget.set_placeholders(<span class="macro">map!</span>(
-            <span class="string">&quot;$total&quot; </span>=&gt; Value::byte(meminfo.ram_total, unit.clone(), decimals),
-            <span class="string">&quot;$used&quot; </span>=&gt; Value::byte(ram_used, unit.clone(), decimals),
-            <span class="string">&quot;$free&quot; </span>=&gt; Value::byte(meminfo.ram_free, unit.clone(), decimals),
-            <span class="string">&quot;$available&quot; </span>=&gt; Value::byte(meminfo.ram_available, unit.clone(), decimals),
-            <span class="string">&quot;$shared&quot; </span>=&gt; Value::byte(meminfo.ram_shared, unit.clone(), decimals),
+            <span class="string">&quot;$total&quot; </span>=&gt; Value::byte(meminfo.ram_total, unit, decimals),
+            <span class="string">&quot;$used&quot; </span>=&gt; Value::byte(ram_used, unit, decimals),
+            <span class="string">&quot;$free&quot; </span>=&gt; Value::byte(meminfo.ram_free, unit, decimals),
+            <span class="string">&quot;$available&quot; </span>=&gt; Value::byte(meminfo.ram_available, unit, decimals),
+            <span class="string">&quot;$shared&quot; </span>=&gt; Value::byte(meminfo.ram_shared, unit, decimals),
             <span class="string">&quot;$percentage_free&quot; </span>=&gt; Value::percentage(<span class="number">100_f64 </span>* (meminfo.ram_free <span class="kw">as </span>f64 / meminfo.ram_total <span class="kw">as </span>f64)),
             <span class="string">&quot;$percentage_available&quot; </span>=&gt; Value::percentage(<span class="number">100_f64 </span>* (meminfo.ram_available <span class="kw">as </span>f64 / meminfo.ram_total <span class="kw">as </span>f64)),
             <span class="string">&quot;$percentage_used&quot; </span>=&gt; Value::percentage(<span class="number">100_f64 </span>* (ram_used <span class="kw">as </span>f64 / meminfo.ram_total <span class="kw">as </span>f64)),

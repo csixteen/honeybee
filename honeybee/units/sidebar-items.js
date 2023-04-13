@@ -1,1 +1,1 @@
-window.SIDEBAR_ITEMS = {"enum":[["Unit",""]],"trait":[["Truncate",""]]};
+window.SIDEBAR_ITEMS = {"enum":[["Unit",""]]};

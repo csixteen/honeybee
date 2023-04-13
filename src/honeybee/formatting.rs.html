@@ -195,6 +195,7 @@
 <a href="#195" id="195">195</a>
 <a href="#196" id="196">196</a>
 <a href="#197" id="197">197</a>
+<a href="#198" id="198">198</a>
 </pre><pre class="rust"><code><span class="doccomment">//! Everything related to format strings, placeholders and value types.
 </span><span class="kw">use </span>std::collections::HashMap;
 <span class="kw">use </span>std::fmt::{<span class="self">self</span>, Formatter};
@@ -354,9 +355,10 @@
                 decimals,
             } =&gt; <span class="macro">write!</span>(
                 f,
-                <span class="string">&quot;{} {}&quot;</span>,
-                Unit::from_bytes(<span class="kw-2">*</span>value, unit.clone(), <span class="kw-2">*</span>decimals),
-                unit
+                <span class="string">&quot;{0:.2$} {1}&quot;</span>,
+                Unit::from_bytes(<span class="kw-2">*</span>value, <span class="kw-2">*</span>unit),
+                unit,
+                decimals
             ),
         }
     }
