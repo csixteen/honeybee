@@ -43,9 +43,15 @@ At the top-level, you can define the following configuration variables:
 
 Just like in the original i3status, the basic idea of honeybee is that you can specify which modules should be used.
 
-### Memory
+Modules are specified in the configuration TOML as an array:
 
-This module is currently only supported in Linux. It gets memory usage from `/proc/meminfo`.
+```toml
+[[module]]
+module = "module_name"
+property1 = "value1"
+```
+
+You can consult the [documentation](https://csixteen.github.io/honeybee/honeybee/modules/index.html) for a list of all the available modules, as well as their configurations.
 
 # Command-line options
 
