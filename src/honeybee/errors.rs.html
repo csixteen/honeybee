@@ -109,6 +109,13 @@
 <a href="#109" id="109">109</a>
 <a href="#110" id="110">110</a>
 <a href="#111" id="111">111</a>
+<a href="#112" id="112">112</a>
+<a href="#113" id="113">113</a>
+<a href="#114" id="114">114</a>
+<a href="#115" id="115">115</a>
+<a href="#116" id="116">116</a>
+<a href="#117" id="117">117</a>
+<a href="#118" id="118">118</a>
 </pre><pre class="rust"><code><span class="kw">use </span>std::borrow::Cow;
 <span class="kw">pub use </span>std::error::Error <span class="kw">as </span>StdError;
 <span class="kw">use </span>std::fmt::{<span class="self">self</span>, Formatter};
@@ -146,6 +153,13 @@
             message: <span class="prelude-val">Some</span>(message.into()),
             source: <span class="prelude-val">None</span>,
         }
+    }
+
+    <span class="kw">pub fn </span>with_source(<span class="self">self</span>, source: Arc&lt;<span class="kw">dyn </span>StdError&gt;) -&gt; <span class="self">Self </span>{
+        <span class="self">Self </span>{
+            source: <span class="prelude-val">Some</span>(source),
+            ..<span class="self">self
+        </span>}
     }
 }
 
