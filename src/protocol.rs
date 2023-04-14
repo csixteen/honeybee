@@ -58,8 +58,8 @@ pub enum Alignment {
 #[derive(Clone, Debug, SmartDefault, Eq, PartialEq, Deserialize, Serialize)]
 #[serde(rename_all = "lowercase")]
 pub enum Markup {
-    #[default]
     None,
+    #[default]
     Pango,
 }
 

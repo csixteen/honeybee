@@ -14,6 +14,7 @@ pub mod errors;
 pub mod formatting;
 pub mod modules;
 pub mod output;
+pub mod pango;
 pub mod protocol;
 pub mod timer;
 pub mod types;
