@@ -13,3 +13,4 @@ Cargo.lock
 .envrc
 .*.swp
 *~
+.DS_Store
