@@ -1,5 +1,6 @@
-# honeybee
-This is a port of the original [i3status](https://github.com/i3/i3status) written in Rust. This was meant to be a learning exercise and for my personal use. It's still lacking lots of functionality and proper error handling / robustness, so use it at your own peril.
+![alt text](img/logo.png "HoneyBee")
+
+**honeybee** is a port of the original [i3status](https://github.com/i3/i3status) written in Rust. This was meant to be a learning exercise and for my personal use. It's still lacking lots of functionality and proper error handling / robustness, so use it at your own peril.
 
 # Motivation
 
