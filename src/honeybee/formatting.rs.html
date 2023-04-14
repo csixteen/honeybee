@@ -196,6 +196,11 @@
 <a href="#196" id="196">196</a>
 <a href="#197" id="197">197</a>
 <a href="#198" id="198">198</a>
+<a href="#199" id="199">199</a>
+<a href="#200" id="200">200</a>
+<a href="#201" id="201">201</a>
+<a href="#202" id="202">202</a>
+<a href="#203" id="203">203</a>
 </pre><pre class="rust"><code><span class="doccomment">//! Everything related to format strings, placeholders and value types.
 </span><span class="kw">use </span>std::collections::HashMap;
 <span class="kw">use </span>std::fmt::{<span class="self">self</span>, Formatter};
@@ -206,6 +211,7 @@
 <span class="kw">use </span>smart_default::SmartDefault;
 
 <span class="kw">use </span><span class="kw">crate</span>::errors::<span class="kw-2">*</span>;
+<span class="kw">use </span><span class="kw">crate</span>::pango::<span class="kw-2">*</span>;
 <span class="kw">use </span><span class="kw">crate</span>::units::Unit;
 
 <span class="doccomment">/// Format strings for `full_text` and `short_text`.
@@ -247,8 +253,12 @@
     <span class="doccomment">/// Replaces the placeholders with the corresponding values in the format strings. Returns
     /// a tuple with the rendered (`full_text`, `short_text`).
     </span><span class="kw">pub fn </span>render(<span class="kw-2">&amp;</span><span class="self">self</span>, placeholders: <span class="kw-2">&amp;</span><span class="prelude-ty">Option</span>&lt;Placeholders&gt;) -&gt; (String, String) {
-        <span class="kw">let </span>full_text = Format::render_string(<span class="self">self</span>.full_text.clone(), placeholders);
-        <span class="kw">let </span>short_text = Format::render_string(<span class="self">self</span>.short_text.clone(), placeholders);
+        <span class="kw">let </span>full_text: String = Format::render_string(<span class="self">self</span>.full_text.clone(), placeholders)
+            .chars()
+            .escape_pango_format();
+        <span class="kw">let </span>short_text: String = Format::render_string(<span class="self">self</span>.short_text.clone(), placeholders)
+            .chars()
+            .escape_pango_format();
         (full_text, short_text)
     }
 }
