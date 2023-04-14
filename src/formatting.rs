@@ -8,6 +8,7 @@ use serde::{de, Deserialize, Deserializer};
 use smart_default::SmartDefault;
 
 use crate::errors::*;
+use crate::pango::*;
 use crate::units::Unit;
 
 /// Format strings for `full_text` and `short_text`.
@@ -49,8 +50,12 @@ impl Format {
     /// Replaces the placeholders with the corresponding values in the format strings. Returns
     /// a tuple with the rendered (`full_text`, `short_text`).
     pub fn render(&self, placeholders: &Option<Placeholders>) -> (String, String) {
-        let full_text = Format::render_string(self.full_text.clone(), placeholders);
-        let short_text = Format::render_string(self.short_text.clone(), placeholders);
+        let full_text: String = Format::render_string(self.full_text.clone(), placeholders)
+            .chars()
+            .escape_pango_format();
+        let short_text: String = Format::render_string(self.short_text.clone(), placeholders)
+            .chars()
+            .escape_pango_format();
         (full_text, short_text)
     }
 }
