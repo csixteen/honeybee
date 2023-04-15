@@ -160,13 +160,10 @@ impl fmt::Display for Value {
                 value,
                 unit,
                 decimals,
-            } => write!(
-                f,
-                "{0:.2$} {1}",
-                Unit::from_bytes(*value, *unit),
-                unit,
-                decimals
-            ),
+            } => {
+                let (v, u) = Unit::from_bytes(*value, *unit);
+                write!(f, "{0:.2$} {1}", v, u, decimals)
+            }
         }
     }
 }
