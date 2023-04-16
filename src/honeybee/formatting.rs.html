@@ -198,6 +198,15 @@
 <a href="#198" id="198">198</a>
 <a href="#199" id="199">199</a>
 <a href="#200" id="200">200</a>
+<a href="#201" id="201">201</a>
+<a href="#202" id="202">202</a>
+<a href="#203" id="203">203</a>
+<a href="#204" id="204">204</a>
+<a href="#205" id="205">205</a>
+<a href="#206" id="206">206</a>
+<a href="#207" id="207">207</a>
+<a href="#208" id="208">208</a>
+<a href="#209" id="209">209</a>
 </pre><pre class="rust"><code><span class="doccomment">//! Everything related to format strings, placeholders and value types.
 </span><span class="kw">use </span>std::collections::HashMap;
 <span class="kw">use </span>std::fmt::{<span class="self">self</span>, Formatter};
@@ -342,6 +351,10 @@
 </span><span class="kw">pub enum </span>Value {
     Icon(String),
     Text(String),
+    Number {
+        value: f64,
+        decimals: usize,
+    },
     Percentage(f64),
     Byte {
         value: u64,
@@ -355,6 +368,7 @@
         <span class="kw">match </span><span class="kw-2">&amp;</span><span class="self">self </span>{
             Value::Icon(<span class="kw">_</span>) =&gt; <span class="macro">todo!</span>(),
             Value::Text(t) =&gt; <span class="macro">write!</span>(f, <span class="string">&quot;{}&quot;</span>, t),
+            Value::Number { value, decimals } =&gt; <span class="macro">write!</span>(f, <span class="string">&quot;{0:.1$}&quot;</span>, value, decimals),
             Value::Percentage(p) =&gt; <span class="macro">write!</span>(f, <span class="string">&quot;{:.2}%&quot;</span>, p),
             Value::Byte {
                 value,
@@ -379,6 +393,10 @@
 
     <span class="kw">pub fn </span>percentage(value: f64) -&gt; Value {
         <span class="self">Self</span>::Percentage(value)
+    }
+
+    <span class="kw">pub fn </span>number(value: f64, decimals: usize) -&gt; Value {
+        <span class="self">Self</span>::Number { value, decimals }
     }
 }
 

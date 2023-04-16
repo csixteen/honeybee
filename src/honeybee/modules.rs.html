@@ -36,6 +36,7 @@
 <a href="#36" id="36">36</a>
 <a href="#37" id="37">37</a>
 <a href="#38" id="38">38</a>
+<a href="#39" id="39">39</a>
 </pre><pre class="rust"><code><span class="kw">use </span>futures::future::FutureExt;
 <span class="kw">use </span>serde::Deserialize;
 <span class="kw">use </span>smart_default::SmartDefault;
@@ -70,6 +71,7 @@
 
 <span class="macro">modules!</span>(
     battery,
+    load_avg,
     <span class="attr">#[cfg(target_os = <span class="string">&quot;linux&quot;</span>)]
     </span>memory,
     time
