@@ -5,7 +5,7 @@
 //!
 //! Key | Description | Values | Default
 //! ----|-------------|--------|--------
-//! `format` | Format string used to define what the output will look like | See placeholders below | `"$1min $5min $15min"
+//! `format` | Format string used to define what the output will look like | See placeholders below | `"$1min $5min $15min"`
 //! `format_above_threshold` | Format used when load average of the last minute is above `max_threshold` | Same as above | `"Warning: $1min"`
 //! `max_threshold` | The current time will be output in the given timezone | A double | `5`
 //!
