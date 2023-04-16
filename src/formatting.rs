@@ -142,6 +142,10 @@ pub type Placeholders = HashMap<String, Value>;
 pub enum Value {
     Icon(String),
     Text(String),
+    Number {
+        value: f64,
+        decimals: usize,
+    },
     Percentage(f64),
     Byte {
         value: u64,
@@ -155,6 +159,7 @@ impl fmt::Display for Value {
         match &self {
             Value::Icon(_) => todo!(),
             Value::Text(t) => write!(f, "{}", t),
+            Value::Number { value, decimals } => write!(f, "{0:.1$}", value, decimals),
             Value::Percentage(p) => write!(f, "{:.2}%", p),
             Value::Byte {
                 value,
@@ -179,6 +184,10 @@ impl Value {
 
     pub fn percentage(value: f64) -> Value {
         Self::Percentage(value)
+    }
+
+    pub fn number(value: f64, decimals: usize) -> Value {
+        Self::Number { value, decimals }
     }
 }
 
