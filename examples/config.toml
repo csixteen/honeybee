@@ -23,3 +23,7 @@ threshold_type = "percentage"
 [[module]]
 module = "time"
 format = "%Y-%m-%d %H:%M %Z"
+
+[[module]]
+module = "load_avg"
+format = "Avg: $1min"

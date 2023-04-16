@@ -32,6 +32,7 @@ enum ModuleState {
 
 modules!(
     battery,
+    load_avg,
     #[cfg(target_os = "linux")]
     memory,
     time

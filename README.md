@@ -4,9 +4,7 @@
 
 # Motivation
 
-My main motivation is to practice Rust and use more advanced patterns and constructs. I use i3 as a Window Manager, and while searching for a replacement of the default i3status I thought it could actually be a good idea to write my own. I've read the entire [source code](https://github.com/i3/i3status) of the original one (which is written in C) and used it as a starting point. Eventually, I came across [i3status-rust](https://github.com/greshake/i3status-rust), which I used as source of inspiration for some idiomatic ways of writing certain parts in Rust, namely proper error handling and macros.
-
-Hopefully, soon I'll write an extensive companion blog post.
+My main motivation is to practice Rust and use more advanced patterns and constructs. I use [i3](https://i3wm.org/) as a Window Manager, and while searching for a replacement of the default i3status I thought it could actually be a good idea to write my own. I've read the entire [source code](https://github.com/i3/i3status) of the original one (which is written in C) and used it as a starting point. Eventually, I came across [i3status-rust](https://github.com/greshake/i3status-rust), which I used as source of inspiration for some idiomatic ways of writing certain parts in Rust, namely proper error handling and macros.
 
 # Getting started
 
@@ -52,7 +50,27 @@ module = "module_name"
 property1 = "value1"
 ```
 
-You can consult the [documentation](https://csixteen.github.io/honeybee/honeybee/modules/index.html) for a list of all the available modules, as well as their configurations.
+You can consult the [documentation](https://csixteen.github.io/honeybee/honeybee/modules/index.html) for details on how to configure the modules.
+
+| Module          | Status             |
+|-----------------|--------------------|
+| Memory          | :heavy_check_mark: |
+| Battery         | :construction:     |
+| Time            | :heavy_check_mark: |
+| Timezone        | :heavy_check_mark: |
+| Load Average    | :heavy_check_mark: |
+| CPU Temperature | :x:                |
+| CPU usage       | :x:                |
+| Date            | :x:                |
+| Disk            | :x:                |
+| Ethernet        | :x:                |
+| File Contents   | :x:                |
+| IPv4 Address    | :x:                |
+| IPv6 Address    | :x:                |
+| Path exists     | :x:                |
+| Run watch       | :x:                |
+| Volume          | :x:                |
+
 
 # Command-line options
 
