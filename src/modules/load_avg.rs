@@ -45,14 +45,9 @@ pub(crate) async fn run(mut config: Config, bridge: Bridge) -> Result<()> {
     let mut timer = bridge.timer().start();
 
     loop {
-        let mut avg: [libc::c_double; 3] = [-1_f64, -1_f64, -1_f64];
-        let ptr = &mut avg as *mut libc::c_double;
+        let avg = LoadAvg::new()?;
 
-        unsafe {
-            libc::getloadavg(ptr, 3);
-        }
-
-        if avg[0] >= config.max_threshold {
+        if avg.0 >= config.max_threshold {
             widget.set_format(format_above_threshold.clone());
             widget.set_state(WidgetState::Critical);
         } else {
@@ -61,9 +56,9 @@ pub(crate) async fn run(mut config: Config, bridge: Bridge) -> Result<()> {
         }
 
         widget.set_placeholders(map!(
-            "$1min" => Value::number(avg[0], 1),
-            "$5min" => Value::number(avg[1], 1),
-            "$15min" => Value::number(avg[2], 1),
+            "$1min" => Value::number(avg.0, 1),
+            "$5min" => Value::number(avg.1, 1),
+            "$15min" => Value::number(avg.2, 1),
         ));
 
         bridge.set_widget(widget.clone()).await?;
@@ -72,6 +67,26 @@ pub(crate) async fn run(mut config: Config, bridge: Bridge) -> Result<()> {
             tokio::select! {
                 _ = timer.tick() => break,
             }
+        }
+    }
+}
+
+struct LoadAvg(f64, f64, f64);
+
+impl LoadAvg {
+    fn new() -> Result<Self> {
+        let mut avg: [libc::c_double; 3] = [-1_f64, -1_f64, -1_f64];
+        let ptr = &mut avg as *mut libc::c_double;
+        let res: libc::c_int;
+
+        unsafe {
+            res = libc::getloadavg(ptr, 3);
+        }
+
+        if res == -1 {
+            Err(Error::new("Couldn't obtain load averages."))
+        } else {
+            Ok(LoadAvg(avg[0], avg[1], avg[2]))
         }
     }
 }
