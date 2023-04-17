@@ -21,6 +21,8 @@ impl OutputFormatter for I3Bar {
         let block = Block {
             full_text: self.full_text(config, &widget),
             color: Some(widget.color(config)),
+            name: Some(widget.name),
+            instance: widget.instance,
             ..Default::default()
         };
         RenderedWidget::I3Block(block)

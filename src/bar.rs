@@ -19,6 +19,7 @@ pub struct Bar {
     output_format: Arc<dyn OutputFormatter>,
     update_sender: Sender<Request>,
     update_receiver: Receiver<Request>,
+    modules: Vec<(&'static str, usize)>,
     running_modules: FuturesUnordered<BoxedFuture<Result<()>>>,
     rendered_widgets: Vec<RenderedWidget>,
 }
@@ -33,6 +34,7 @@ impl Bar {
             update_sender,
             update_receiver,
             output_format,
+            modules: Vec::new(),
             running_modules: FuturesUnordered::new(),
             rendered_widgets: Vec::new(),
         }
@@ -45,6 +47,7 @@ impl Bar {
             self.update_sender.clone(),
             self.general_config.update_interval,
         );
+        self.modules.push((config.name(), id));
         self.running_modules.push(Box::pin(config.run(bridge)));
         self.rendered_widgets.push(RenderedWidget::default());
 
@@ -54,9 +57,10 @@ impl Bar {
     fn process_request(&mut self, request: Request) {
         match request {
             Request::SetWidget { id, widget } => {
-                self.rendered_widgets[id] = self
-                    .output_format
-                    .render_widget(&self.general_config, widget);
+                self.rendered_widgets[id] = self.output_format.render_widget(
+                    &self.general_config,
+                    widget.with_name(self.modules[id].0.to_owned()),
+                );
             }
         }
     }
