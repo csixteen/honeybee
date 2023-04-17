@@ -105,6 +105,15 @@ macro_rules! modules {
                     )*
                 }
             }
+
+            pub fn name(&self) -> &'static str {
+                match self {
+                    $(
+                        $(#[cfg($x = $xp)])?
+                        Self::$module { .. } => stringify!($module),
+                    )*
+                }
+            }
         }
     }
 }

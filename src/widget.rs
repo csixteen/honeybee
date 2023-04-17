@@ -12,6 +12,8 @@ use crate::output::color::Color;
 /// output of a module.
 #[derive(Clone, Debug, Default)]
 pub struct Widget {
+    pub name: String,
+    pub instance: Option<String>,
     pub state: WidgetState,
     pub content: ContentType,
 }
@@ -19,6 +21,17 @@ pub struct Widget {
 impl Widget {
     pub(crate) fn new() -> Self {
         Default::default()
+    }
+
+    pub(crate) fn with_name(self, name: String) -> Self {
+        Self { name, ..self }
+    }
+
+    pub(crate) fn with_instance(self, instance: String) -> Self {
+        Self {
+            instance: Some(instance),
+            ..self
+        }
     }
 
     pub(crate) fn set_state(&mut self, state: WidgetState) {

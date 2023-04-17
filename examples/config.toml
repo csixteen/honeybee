@@ -22,6 +22,7 @@ threshold_type = "percentage"
 
 [[module]]
 module = "time"
+title = "local"
 format = "%Y-%m-%d %H:%M %Z"
 
 [[module]]

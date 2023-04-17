@@ -5,6 +5,7 @@
 //!
 //! Key | Description | Values | Default
 //! ----|-------------|--------|--------
+//! `title` | Identifies this particular time instance (you can have multiple) | A string | N/A
 //! `format` | Format string used to define what the output will look like | See below | `"%Y-%m-%d %H:%M %Z"`
 //! `timezone` | The current time will be output in the given timezone | See below | `"Local"`
 //!
@@ -22,6 +23,7 @@
 //! ```toml
 //! [[module]]
 //! module = "time"
+//! title = "Amsterdam"
 //! format = "%Y-%m-%d %H:%M %Z"
 //! timezone = "Europe/Amsterdam"
 //! ```
@@ -34,15 +36,16 @@ use chrono_tz::Tz;
 use super::prelude::*;
 
 #[derive(Clone, Debug, SmartDefault, PartialEq, Deserialize)]
-#[serde(default)]
 pub struct Config {
+    title: String,
     #[default("%Y-%m-%d %H:%M %Z")]
     format: String,
+    #[serde(default)]
     timezone: TimeZone,
 }
 
 pub(crate) async fn run(config: Config, bridge: Bridge) -> Result<()> {
-    let mut widget = Widget::new();
+    let mut widget = Widget::new().with_instance(config.title);
     widget.set_format(Format::new().with_default("$time"));
     let mut timer = bridge.timer().start();
 
