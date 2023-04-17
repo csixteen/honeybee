@@ -101,6 +101,9 @@
 <a href="#101" id="101">101</a>
 <a href="#102" id="102">102</a>
 <a href="#103" id="103">103</a>
+<a href="#104" id="104">104</a>
+<a href="#105" id="105">105</a>
+<a href="#106" id="106">106</a>
 </pre><pre class="rust"><code><span class="doccomment">//! Outputs the current time in the local timezone, if `timezone` is not set, or in
 //! given timezone, if `timezone` is set.
 //!
@@ -108,6 +111,7 @@
 //!
 //! Key | Description | Values | Default
 //! ----|-------------|--------|--------
+//! `title` | Identifies this particular time instance (you can have multiple) | A string | N/A
 //! `format` | Format string used to define what the output will look like | See below | `&quot;%Y-%m-%d %H:%M %Z&quot;`
 //! `timezone` | The current time will be output in the given timezone | See below | `&quot;Local&quot;`
 //!
@@ -125,6 +129,7 @@
 //! ```toml
 //! [[module]]
 //! module = &quot;time&quot;
+//! title = &quot;Amsterdam&quot;
 //! format = &quot;%Y-%m-%d %H:%M %Z&quot;
 //! timezone = &quot;Europe/Amsterdam&quot;
 //! ```
@@ -137,15 +142,16 @@
 <span class="kw">use </span><span class="kw">super</span>::prelude::<span class="kw-2">*</span>;
 
 <span class="attr">#[derive(Clone, Debug, SmartDefault, PartialEq, Deserialize)]
-#[serde(default)]
 </span><span class="kw">pub struct </span>Config {
+    title: String,
     <span class="attr">#[default(<span class="string">&quot;%Y-%m-%d %H:%M %Z&quot;</span>)]
     </span>format: String,
-    timezone: TimeZone,
+    <span class="attr">#[serde(default)]
+    </span>timezone: TimeZone,
 }
 
 <span class="kw">pub</span>(<span class="kw">crate</span>) <span class="kw">async fn </span>run(config: Config, bridge: Bridge) -&gt; <span class="prelude-ty">Result</span>&lt;()&gt; {
-    <span class="kw">let </span><span class="kw-2">mut </span>widget = Widget::new();
+    <span class="kw">let </span><span class="kw-2">mut </span>widget = Widget::new().with_instance(config.title);
     widget.set_format(Format::new().with_default(<span class="string">&quot;$time&quot;</span>));
     <span class="kw">let </span><span class="kw-2">mut </span>timer = bridge.timer().start();
 

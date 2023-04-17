@@ -99,6 +99,10 @@
 <a href="#99" id="99">99</a>
 <a href="#100" id="100">100</a>
 <a href="#101" id="101">101</a>
+<a href="#102" id="102">102</a>
+<a href="#103" id="103">103</a>
+<a href="#104" id="104">104</a>
+<a href="#105" id="105">105</a>
 </pre><pre class="rust"><code><span class="doccomment">//! This is the main container of all the running modules.
 </span><span class="kw">use </span>std::sync::Arc;
 
@@ -120,6 +124,7 @@
     output_format: Arc&lt;<span class="kw">dyn </span>OutputFormatter&gt;,
     update_sender: Sender&lt;Request&gt;,
     update_receiver: Receiver&lt;Request&gt;,
+    modules: Vec&lt;(<span class="kw-2">&amp;</span><span class="lifetime">&#39;static </span>str, usize)&gt;,
     running_modules: FuturesUnordered&lt;BoxedFuture&lt;<span class="prelude-ty">Result</span>&lt;()&gt;&gt;&gt;,
     rendered_widgets: Vec&lt;RenderedWidget&gt;,
 }
@@ -134,6 +139,7 @@
             update_sender,
             update_receiver,
             output_format,
+            modules: Vec::new(),
             running_modules: FuturesUnordered::new(),
             rendered_widgets: Vec::new(),
         }
@@ -146,6 +152,7 @@
             <span class="self">self</span>.update_sender.clone(),
             <span class="self">self</span>.general_config.update_interval,
         );
+        <span class="self">self</span>.modules.push((config.name(), id));
         <span class="self">self</span>.running_modules.push(Box::pin(config.run(bridge)));
         <span class="self">self</span>.rendered_widgets.push(RenderedWidget::default());
 
@@ -155,9 +162,10 @@
     <span class="kw">fn </span>process_request(<span class="kw-2">&amp;mut </span><span class="self">self</span>, request: Request) {
         <span class="kw">match </span>request {
             Request::SetWidget { id, widget } =&gt; {
-                <span class="self">self</span>.rendered_widgets[id] = <span class="self">self
-                    </span>.output_format
-                    .render_widget(<span class="kw-2">&amp;</span><span class="self">self</span>.general_config, widget);
+                <span class="self">self</span>.rendered_widgets[id] = <span class="self">self</span>.output_format.render_widget(
+                    <span class="kw-2">&amp;</span><span class="self">self</span>.general_config,
+                    widget.with_name(<span class="self">self</span>.modules[id].<span class="number">0</span>.to_owned()),
+                );
             }
         }
     }
