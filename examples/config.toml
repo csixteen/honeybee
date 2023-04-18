@@ -28,3 +28,8 @@ format = "%Y-%m-%d %H:%M %Z"
 [[module]]
 module = "load_avg"
 format = "Avg: $1min"
+
+[[module]]
+module = "path_exists"
+title = "VPN"
+path = "/non/existing/path"

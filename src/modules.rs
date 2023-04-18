@@ -35,5 +35,6 @@ modules!(
     load_avg,
     #[cfg(target_os = "linux")]
     memory,
+    path_exists,
     time
 );
