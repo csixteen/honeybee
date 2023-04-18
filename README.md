@@ -59,6 +59,7 @@ You can consult the [documentation](https://csixteen.github.io/honeybee/honeybee
 | Time            | :heavy_check_mark: |
 | Timezone        | :heavy_check_mark: |
 | Load Average    | :heavy_check_mark: |
+| Path exists     | :heavy_check_mark: |
 | CPU Temperature | :x:                |
 | CPU usage       | :x:                |
 | Date            | :x:                |
@@ -67,7 +68,6 @@ You can consult the [documentation](https://csixteen.github.io/honeybee/honeybee
 | File Contents   | :x:                |
 | IPv4 Address    | :x:                |
 | IPv6 Address    | :x:                |
-| Path exists     | :x:                |
 | Run watch       | :x:                |
 | Volume          | :x:                |
 
