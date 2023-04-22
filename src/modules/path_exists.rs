@@ -19,7 +19,7 @@
 //! [[module]]
 //! module = "path_exists"
 //! title = "VPN"
-//! path = "/non/existing/path"
+//! path = "/path/to/some/file"
 //! ```
 use tokio::fs;
 
