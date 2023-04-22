@@ -1,1 +1,1 @@
-window.SIDEBAR_ITEMS = {"type":[["BoxedFuture",""]]};
+window.SIDEBAR_ITEMS = {"type":["BoxedFuture"]};

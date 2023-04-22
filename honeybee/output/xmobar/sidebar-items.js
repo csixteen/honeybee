@@ -1,1 +1,1 @@
-window.SIDEBAR_ITEMS = {"struct":[["XmoBar",""]]};
+window.SIDEBAR_ITEMS = {"struct":["XmoBar"]};

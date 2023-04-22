@@ -1,1 +1,1 @@
-window.SIDEBAR_ITEMS = {"enum":[["ChargingStatus","Represents the operating status. Corresponds to `POWER_SUPPLY_STATUS_*`, as defined in `power_supply.h`."],["ThresholdType",""]],"struct":[["Config",""]]};
+window.SIDEBAR_ITEMS = {"enum":["ChargingStatus","ThresholdType"],"struct":["Config"]};

@@ -1,1 +1,1 @@
-window.SIDEBAR_ITEMS = {"trait":[["PangoEscapeExt",""]]};
+window.SIDEBAR_ITEMS = {"trait":["PangoEscapeExt"]};

@@ -1,1 +1,1 @@
-window.SIDEBAR_ITEMS = {"enum":[["Value",""]],"struct":[["Format","Format strings for `full_text` and `short_text`."]],"type":[["Placeholders","Maps specific placeholders to the corresponding values. E.g. $total => “32 GiB”"]]};
+window.SIDEBAR_ITEMS = {"enum":["Value"],"struct":["Format"],"type":["Placeholders"]};

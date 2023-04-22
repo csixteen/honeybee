@@ -1,1 +1,1 @@
-window.SIDEBAR_ITEMS = {"enum":[["ContentType",""],["WidgetState","The state of the widget will define its color value, which can be either `color_good`, `color_degraded` or `color_bad`."]],"struct":[["Widget","The graphical element that is used to render the output of a module."]]};
+window.SIDEBAR_ITEMS = {"enum":["ContentType","WidgetState"],"struct":["Widget"]};
