@@ -36,5 +36,6 @@ modules!(
     #[cfg(target_os = "linux")]
     memory,
     path_exists,
+    run_watch,
     time
 );
