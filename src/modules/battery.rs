@@ -56,13 +56,13 @@ pub struct Config {
     pub format: Format,
     #[default(Format::new().with_default("No battery"))]
     pub format_down: Format,
-    #[default("CHR".into())]
+    #[default("CHR")]
     pub status_chr: String,
-    #[default("BAT".into())]
+    #[default("BAT")]
     pub status_bat: String,
-    #[default("UNK".into())]
+    #[default("UNK")]
     pub status_unk: String,
-    #[default("FULL".into())]
+    #[default("FULL")]
     pub status_full: String,
     #[default(10)]
     pub low_threshold: i64,

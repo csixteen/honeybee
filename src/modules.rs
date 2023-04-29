@@ -4,7 +4,6 @@ use smart_default::SmartDefault;
 
 use crate::bridge::Bridge;
 use crate::errors::*;
-use crate::modules;
 use crate::types::BoxedFuture;
 
 mod prelude;
@@ -30,8 +29,9 @@ enum ModuleState {
     Error,
 }
 
-modules!(
+crate::modules!(
     battery,
+    disk,
     load_avg,
     #[cfg(target_os = "linux")]
     memory,

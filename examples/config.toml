@@ -3,6 +3,10 @@ colors = true
 color_good = "#00AA00"
 
 [[module]]
+module = "disk"
+format = "/: $avail"
+
+[[module]]
 module = "memory"
 format_degraded = "[$available / $percentage_available]"
 

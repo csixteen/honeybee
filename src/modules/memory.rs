@@ -39,6 +39,7 @@
 //! unit = "GiB"
 //! ```
 
+use crate::units::unit_to_bytes;
 use tokio::fs::File;
 use tokio::io::{AsyncBufReadExt, BufReader};
 
@@ -55,8 +56,8 @@ pub struct Config {
     threshold_critical: Option<String>,
     #[default(Some(Default::default()))]
     memory_used_method: Option<MemoryUsedMethod>,
-    #[default(Some(Unit::GiB))]
-    unit: Option<Unit>,
+    #[default(Some(IecSymbol::GiB))]
+    unit: Option<IecSymbol>,
     #[default(Some(1))]
     decimals: Option<usize>,
 }
@@ -99,11 +100,11 @@ pub(crate) async fn run(config: Config, bridge: Bridge) -> Result<()> {
         );
 
         widget.set_placeholders(map!(
-            "$total" => Value::byte(meminfo.ram_total, unit, decimals),
-            "$used" => Value::byte(ram_used, unit, decimals),
-            "$free" => Value::byte(meminfo.ram_free, unit, decimals),
-            "$available" => Value::byte(meminfo.ram_available, unit, decimals),
-            "$shared" => Value::byte(meminfo.ram_shared, unit, decimals),
+            "$total" => Value::byte(meminfo.ram_total, Unit::Iec(unit), decimals),
+            "$used" => Value::byte(ram_used, Unit::Iec(unit), decimals),
+            "$free" => Value::byte(meminfo.ram_free, Unit::Iec(unit), decimals),
+            "$available" => Value::byte(meminfo.ram_available, Unit::Iec(unit), decimals),
+            "$shared" => Value::byte(meminfo.ram_shared, Unit::Iec(unit), decimals),
             "$percentage_free" => Value::percentage(100_f64 * (meminfo.ram_free as f64 / meminfo.ram_total as f64)),
             "$percentage_available" => Value::percentage(100_f64 * (meminfo.ram_available as f64 / meminfo.ram_total as f64)),
             "$percentage_used" => Value::percentage(100_f64 * (ram_used as f64 / meminfo.ram_total as f64)),
@@ -137,7 +138,7 @@ fn memory_absolute(mem_amount: &str, mem_total: u64) -> Result<u64> {
     if unit == '%' {
         Ok(amount * mem_total / 100)
     } else {
-        Ok(Unit::convert_to_bytes(amount, Unit::try_from(unit)?))
+        Ok(unit_to_bytes(amount, Unit::Iec(IecSymbol::try_from(unit)?)))
     }
 }
 
