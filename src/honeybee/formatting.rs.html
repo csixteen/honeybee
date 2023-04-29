@@ -218,7 +218,7 @@
 
 <span class="kw">use </span><span class="kw">crate</span>::errors::<span class="kw-2">*</span>;
 <span class="kw">use </span><span class="kw">crate</span>::pango::<span class="kw-2">*</span>;
-<span class="kw">use </span><span class="kw">crate</span>::units::Unit;
+<span class="kw">use </span><span class="kw">crate</span>::units::{bytes_to_unit, Unit};
 
 <span class="doccomment">/// Format strings for `full_text` and `short_text`.
 </span><span class="attr">#[derive(Clone, Debug, SmartDefault, Eq, PartialEq)]
@@ -375,7 +375,7 @@
                 unit,
                 decimals,
             } =&gt; {
-                <span class="kw">let </span>(v, u) = Unit::from_bytes(<span class="kw-2">*</span>value, <span class="kw-2">*</span>unit);
+                <span class="kw">let </span>(v, u) = bytes_to_unit(<span class="kw-2">*</span>value, <span class="kw-2">*</span>unit);
                 <span class="macro">write!</span>(f, <span class="string">&quot;{0:.2$} {1}&quot;</span>, v, u, decimals)
             }
         }

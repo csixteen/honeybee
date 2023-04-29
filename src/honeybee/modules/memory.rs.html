@@ -225,6 +225,7 @@
 <a href="#225" id="225">225</a>
 <a href="#226" id="226">226</a>
 <a href="#227" id="227">227</a>
+<a href="#228" id="228">228</a>
 </pre><pre class="rust"><code><span class="doccomment">//! Memory usage on a Linux system from /proc/meminfo.
 //!
 //! # Configuration
@@ -266,7 +267,8 @@
 //! unit = &quot;GiB&quot;
 //! ```
 
-</span><span class="kw">use </span>tokio::fs::File;
+</span><span class="kw">use </span><span class="kw">crate</span>::units::unit_to_bytes;
+<span class="kw">use </span>tokio::fs::File;
 <span class="kw">use </span>tokio::io::{AsyncBufReadExt, BufReader};
 
 <span class="kw">use </span><span class="kw">super</span>::prelude::<span class="kw-2">*</span>;
@@ -282,8 +284,8 @@
     </span>threshold_critical: <span class="prelude-ty">Option</span>&lt;String&gt;,
     <span class="attr">#[default(<span class="prelude-val">Some</span>(Default::default()))]
     </span>memory_used_method: <span class="prelude-ty">Option</span>&lt;MemoryUsedMethod&gt;,
-    <span class="attr">#[default(<span class="prelude-val">Some</span>(Unit::GiB))]
-    </span>unit: <span class="prelude-ty">Option</span>&lt;Unit&gt;,
+    <span class="attr">#[default(<span class="prelude-val">Some</span>(IecSymbol::GiB))]
+    </span>unit: <span class="prelude-ty">Option</span>&lt;IecSymbol&gt;,
     <span class="attr">#[default(<span class="prelude-val">Some</span>(<span class="number">1</span>))]
     </span>decimals: <span class="prelude-ty">Option</span>&lt;usize&gt;,
 }
@@ -326,11 +328,11 @@
         );
 
         widget.set_placeholders(<span class="macro">map!</span>(
-            <span class="string">&quot;$total&quot; </span>=&gt; Value::byte(meminfo.ram_total, unit, decimals),
-            <span class="string">&quot;$used&quot; </span>=&gt; Value::byte(ram_used, unit, decimals),
-            <span class="string">&quot;$free&quot; </span>=&gt; Value::byte(meminfo.ram_free, unit, decimals),
-            <span class="string">&quot;$available&quot; </span>=&gt; Value::byte(meminfo.ram_available, unit, decimals),
-            <span class="string">&quot;$shared&quot; </span>=&gt; Value::byte(meminfo.ram_shared, unit, decimals),
+            <span class="string">&quot;$total&quot; </span>=&gt; Value::byte(meminfo.ram_total, Unit::Iec(unit), decimals),
+            <span class="string">&quot;$used&quot; </span>=&gt; Value::byte(ram_used, Unit::Iec(unit), decimals),
+            <span class="string">&quot;$free&quot; </span>=&gt; Value::byte(meminfo.ram_free, Unit::Iec(unit), decimals),
+            <span class="string">&quot;$available&quot; </span>=&gt; Value::byte(meminfo.ram_available, Unit::Iec(unit), decimals),
+            <span class="string">&quot;$shared&quot; </span>=&gt; Value::byte(meminfo.ram_shared, Unit::Iec(unit), decimals),
             <span class="string">&quot;$percentage_free&quot; </span>=&gt; Value::percentage(<span class="number">100_f64 </span>* (meminfo.ram_free <span class="kw">as </span>f64 / meminfo.ram_total <span class="kw">as </span>f64)),
             <span class="string">&quot;$percentage_available&quot; </span>=&gt; Value::percentage(<span class="number">100_f64 </span>* (meminfo.ram_available <span class="kw">as </span>f64 / meminfo.ram_total <span class="kw">as </span>f64)),
             <span class="string">&quot;$percentage_used&quot; </span>=&gt; Value::percentage(<span class="number">100_f64 </span>* (ram_used <span class="kw">as </span>f64 / meminfo.ram_total <span class="kw">as </span>f64)),
@@ -364,7 +366,7 @@
     <span class="kw">if </span>unit == <span class="string">&#39;%&#39; </span>{
         <span class="prelude-val">Ok</span>(amount * mem_total / <span class="number">100</span>)
     } <span class="kw">else </span>{
-        <span class="prelude-val">Ok</span>(Unit::convert_to_bytes(amount, Unit::try_from(unit)<span class="question-mark">?</span>))
+        <span class="prelude-val">Ok</span>(unit_to_bytes(amount, Unit::Iec(IecSymbol::try_from(unit)<span class="question-mark">?</span>)))
     }
 }
 
