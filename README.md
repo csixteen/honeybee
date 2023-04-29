@@ -55,6 +55,7 @@ You can consult the [documentation](https://csixteen.github.io/honeybee/honeybee
 | Module          | Status             |
 |-----------------|--------------------|
 | Battery         | :construction:     |
+| Disk            | :heavy_check_mark: |
 | Load Average    | :heavy_check_mark: |
 | Memory          | :heavy_check_mark: |
 | Path exists     | :heavy_check_mark: |
@@ -64,13 +65,26 @@ You can consult the [documentation](https://csixteen.github.io/honeybee/honeybee
 | CPU Temperature | :x:                |
 | CPU usage       | :x:                |
 | Date            | :x:                |
-| Disk            | :x:                |
 | Ethernet        | :x:                |
 | File Contents   | :x:                |
 | IPv4 Address    | :x:                |
 | IPv6 Address    | :x:                |
 | Volume          | :x:                |
 
+## Output format
+
+The original i3status supports several output formats, which determine the format string used in its output.
+The following table shows the output formats supported by i3status and which ones have been migrated already:
+
+| Output format | Status             |
+|---------------|--------------------|
+| i3bar         | :heavy_check_mark: |
+| dzen2         | :construction:     |
+| xmobar        | :construction:     |
+| lemonbar      | :construction:     |
+| term          | :construction:     |
+
+You can check the [documentation](https://csixteen.github.io/honeybee/honeybee/output/index.html) for more information about output formats.
 
 # Command-line options
 

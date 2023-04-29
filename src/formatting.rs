@@ -9,7 +9,7 @@ use smart_default::SmartDefault;
 
 use crate::errors::*;
 use crate::pango::*;
-use crate::units::Unit;
+use crate::units::{bytes_to_unit, Unit};
 
 /// Format strings for `full_text` and `short_text`.
 #[derive(Clone, Debug, SmartDefault, Eq, PartialEq)]
@@ -166,7 +166,7 @@ impl fmt::Display for Value {
                 unit,
                 decimals,
             } => {
-                let (v, u) = Unit::from_bytes(*value, *unit);
+                let (v, u) = bytes_to_unit(*value, *unit);
                 write!(f, "{0:.2$} {1}", v, u, decimals)
             }
         }
