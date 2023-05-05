@@ -109,11 +109,14 @@
 <a href="#109" id="109">109</a>
 <a href="#110" id="110">110</a>
 <a href="#111" id="111">111</a>
+<a href="#112" id="112">112</a>
+<a href="#113" id="113">113</a>
 </pre><pre class="rust"><code><span class="doccomment">//! Utilities, mostly to manipulate files.
 </span><span class="kw">use </span>std::env;
 <span class="kw">use </span>std::ffi::OsString;
 <span class="kw">use </span>std::fs;
 <span class="kw">use </span>std::path::{Path, PathBuf};
+<span class="kw">use </span>std::sync::Arc;
 
 <span class="kw">use </span>serde::de::DeserializeOwned;
 <span class="kw">use </span>tokio::fs::File;
@@ -135,6 +138,7 @@
             <span class="string">&quot;Failed to deserialize TOML config: {}&quot;</span>,
             e.message()
         ))
+        .with_source(Arc::new(e))
     })
 }
 

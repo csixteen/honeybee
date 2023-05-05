@@ -276,8 +276,10 @@
 <span class="attr">#[derive(Clone, Debug, SmartDefault, PartialEq, Deserialize)]
 #[serde(default)]
 </span><span class="kw">pub struct </span>Config {
-    format: Format,
-    format_degraded: Format,
+    <span class="attr">#[default(Format::new().with_default(<span class="string">&quot;$percentage_used&quot;</span>))]
+    </span>format: Format,
+    <span class="attr">#[default(Format::new().with_default(<span class="string">&quot;$percentage_available&quot;</span>))]
+    </span>format_degraded: Format,
     <span class="attr">#[default(<span class="prelude-val">Some</span>(String::from(<span class="string">&quot;10%&quot;</span>)))]
     </span>threshold_degraded: <span class="prelude-ty">Option</span>&lt;String&gt;,
     <span class="attr">#[default(<span class="prelude-val">Some</span>(String::from(<span class="string">&quot;5%&quot;</span>)))]
@@ -292,22 +294,20 @@
 
 <span class="kw">pub</span>(<span class="kw">crate</span>) <span class="kw">async fn </span>run(config: Config, bridge: Bridge) -&gt; <span class="prelude-ty">Result</span>&lt;()&gt; {
     <span class="kw">let </span><span class="kw-2">mut </span>widget = Widget::new();
-    <span class="kw">let </span>format = config.format.with_default(<span class="string">&quot;$percentage_used&quot;</span>);
-    <span class="kw">let </span>format_degraded = config.format_degraded.with_default(<span class="string">&quot;$percentage_available&quot;</span>);
     <span class="kw">let </span><span class="kw-2">mut </span>timer = bridge.timer().start();
     <span class="kw">let </span>unit = config.unit.expect(<span class="string">&quot;unit&quot;</span>);
     <span class="kw">let </span>decimals = config.decimals.expect(<span class="string">&quot;decimals&quot;</span>);
 
     <span class="kw">loop </span>{
         widget.set_state(WidgetState::Normal);
-        widget.set_format(format.clone());
+        widget.set_format(config.format.clone());
 
         <span class="kw">let </span>meminfo = MemInfo::new().<span class="kw">await</span><span class="question-mark">?</span>;
 
         <span class="kw">if let </span><span class="prelude-val">Some</span>(degraded) = <span class="kw-2">&amp;</span>config.threshold_degraded {
             <span class="kw">let </span>threshold = memory_absolute(degraded, meminfo.ram_total)<span class="question-mark">?</span>;
             <span class="kw">if </span>meminfo.ram_available &lt; threshold {
-                widget.set_format(format_degraded.clone());
+                widget.set_format(config.format_degraded.clone());
                 widget.set_state(WidgetState::Warning);
             }
         }
@@ -315,7 +315,7 @@
         <span class="kw">if let </span><span class="prelude-val">Some</span>(critical) = <span class="kw-2">&amp;</span>config.threshold_critical {
             <span class="kw">let </span>threshold = memory_absolute(critical, meminfo.ram_total)<span class="question-mark">?</span>;
             <span class="kw">if </span>meminfo.ram_available &lt; threshold {
-                widget.set_format(format_degraded.clone());
+                widget.set_format(config.format_degraded.clone());
                 widget.set_state(WidgetState::Critical);
             }
         }

@@ -104,6 +104,10 @@
 <a href="#104" id="104">104</a>
 <a href="#105" id="105">105</a>
 <a href="#106" id="106">106</a>
+<a href="#107" id="107">107</a>
+<a href="#108" id="108">108</a>
+<a href="#109" id="109">109</a>
+<a href="#110" id="110">110</a>
 </pre><pre class="rust"><code><span class="doccomment">//! Outputs the current time in the local timezone, if `timezone` is not set, or in
 //! given timezone, if `timezone` is set.
 //!
@@ -136,6 +140,7 @@
 //!
 //! [`valid identifiers`]: https://docs.rs/chrono/latest/chrono/format/strftime/index.html
 //! [`TZ identifier`]: https://en.wikipedia.org/wiki/List_of_tz_database_time_zones
+
 </span><span class="kw">use </span>chrono::{Local, Utc};
 <span class="kw">use </span>chrono_tz::Tz;
 
@@ -144,8 +149,7 @@
 <span class="attr">#[derive(Clone, Debug, SmartDefault, PartialEq, Deserialize)]
 </span><span class="kw">pub struct </span>Config {
     title: String,
-    <span class="attr">#[default(<span class="string">&quot;%Y-%m-%d %H:%M %Z&quot;</span>)]
-    </span>format: String,
+    format: <span class="prelude-ty">Option</span>&lt;String&gt;,
     <span class="attr">#[serde(default)]
     </span>timezone: TimeZone,
 }
@@ -154,14 +158,18 @@
     <span class="kw">let </span><span class="kw-2">mut </span>widget = Widget::new().with_instance(config.title);
     widget.set_format(Format::new().with_default(<span class="string">&quot;$time&quot;</span>));
     <span class="kw">let </span><span class="kw-2">mut </span>timer = bridge.timer().start();
+    <span class="kw">let </span>format = <span class="kw">match </span>config.format {
+        <span class="prelude-val">None </span>=&gt; <span class="string">&quot;%Y-%m-%d %H:%M %Z&quot;</span>.to_string(),
+        <span class="prelude-val">Some</span>(f) =&gt; f,
+    };
 
     <span class="kw">loop </span>{
         <span class="kw">let </span>t = <span class="kw">match </span><span class="kw-2">&amp;</span>config.timezone {
-            TimeZone::Utc =&gt; Utc::now().format(<span class="kw-2">&amp;</span>config.format),
-            TimeZone::Local =&gt; Local::now().format(<span class="kw-2">&amp;</span>config.format),
+            TimeZone::Utc =&gt; Utc::now().format(<span class="kw-2">&amp;</span>format),
+            TimeZone::Local =&gt; Local::now().format(<span class="kw-2">&amp;</span>format),
             TimeZone::TimeZone(tz) =&gt; {
                 <span class="kw">let </span>ttz: Tz = tz.parse().unwrap();
-                Utc::now().with_timezone(<span class="kw-2">&amp;</span>ttz).format(<span class="kw-2">&amp;</span>config.format)
+                Utc::now().with_timezone(<span class="kw-2">&amp;</span>ttz).format(<span class="kw-2">&amp;</span>format)
             }
         };
 
