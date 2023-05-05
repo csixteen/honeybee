@@ -56,6 +56,7 @@ You can consult the [documentation](https://csixteen.github.io/honeybee/honeybee
 |-----------------|--------------------|
 | Battery         | :construction:     |
 | Disk            | :heavy_check_mark: |
+| File Contents   | :heavy_check_mark: |
 | Load Average    | :heavy_check_mark: |
 | Memory          | :heavy_check_mark: |
 | Path exists     | :heavy_check_mark: |
@@ -66,7 +67,6 @@ You can consult the [documentation](https://csixteen.github.io/honeybee/honeybee
 | CPU usage       | :x:                |
 | Date            | :x:                |
 | Ethernet        | :x:                |
-| File Contents   | :x:                |
 | IPv4 Address    | :x:                |
 | IPv6 Address    | :x:                |
 | Wireless Info   | :x:                |

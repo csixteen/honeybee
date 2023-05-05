@@ -1,9 +1,9 @@
 [package]
 name = "honeybee"
-description = "A port of the original i3status written in Rust."
+description = "A port of the original i3status, written in Rust."
 repository = "https://github.com/csixteen/honeybee/"
 readme = "README.md"
-version = "0.9.0-alpha2"
+version = "0.9.0"
 edition = "2021"
 license = "MIT"
 authors = ["Pedro Rodrigues <csixteen@proton.me>"]
