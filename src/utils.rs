@@ -3,6 +3,7 @@ use std::env;
 use std::ffi::OsString;
 use std::fs;
 use std::path::{Path, PathBuf};
+use std::sync::Arc;
 
 use serde::de::DeserializeOwned;
 use tokio::fs::File;
@@ -24,6 +25,7 @@ where
             "Failed to deserialize TOML config: {}",
             e.message()
         ))
+        .with_source(Arc::new(e))
     })
 }
 

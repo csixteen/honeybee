@@ -48,7 +48,9 @@ use super::prelude::*;
 #[derive(Clone, Debug, SmartDefault, PartialEq, Deserialize)]
 #[serde(default)]
 pub struct Config {
+    #[default(Format::new().with_default("$percentage_used"))]
     format: Format,
+    #[default(Format::new().with_default("$percentage_available"))]
     format_degraded: Format,
     #[default(Some(String::from("10%")))]
     threshold_degraded: Option<String>,
@@ -64,22 +66,20 @@ pub struct Config {
 
 pub(crate) async fn run(config: Config, bridge: Bridge) -> Result<()> {
     let mut widget = Widget::new();
-    let format = config.format.with_default("$percentage_used");
-    let format_degraded = config.format_degraded.with_default("$percentage_available");
     let mut timer = bridge.timer().start();
     let unit = config.unit.expect("unit");
     let decimals = config.decimals.expect("decimals");
 
     loop {
         widget.set_state(WidgetState::Normal);
-        widget.set_format(format.clone());
+        widget.set_format(config.format.clone());
 
         let meminfo = MemInfo::new().await?;
 
         if let Some(degraded) = &config.threshold_degraded {
             let threshold = memory_absolute(degraded, meminfo.ram_total)?;
             if meminfo.ram_available < threshold {
-                widget.set_format(format_degraded.clone());
+                widget.set_format(config.format_degraded.clone());
                 widget.set_state(WidgetState::Warning);
             }
         }
@@ -87,7 +87,7 @@ pub(crate) async fn run(config: Config, bridge: Bridge) -> Result<()> {
         if let Some(critical) = &config.threshold_critical {
             let threshold = memory_absolute(critical, meminfo.ram_total)?;
             if meminfo.ram_available < threshold {
-                widget.set_format(format_degraded.clone());
+                widget.set_format(config.format_degraded.clone());
                 widget.set_state(WidgetState::Critical);
             }
         }

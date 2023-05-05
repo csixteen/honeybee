@@ -1,3 +1,4 @@
+pub use std::path::Path;
 pub use std::str::FromStr;
 
 pub(crate) use crate::{from_str, map};
