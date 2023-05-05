@@ -1,3 +1,31 @@
+//! Outputs the contents of the specified file. You can use this to check contents
+//! of files on your system, for example `/proc/uptime`.
+//!
+//! # Configuration
+//!
+//! Key | Description | Values | Default
+//! ----|-------------|--------|--------
+//! `title` | Will replace the placeholder `$title` | A string | N/A
+//! `path` | The actual path to the file whose contents we want to read | String representing an absolute path | N/A
+//! `format` | A custom string to format the status of the path in the bar | A string with placeholders | `"$title: $content"`
+//! `format_bad` | As above, for when there was a problem reading the file. | A string with placeholders | `"$title: $error"`
+//! `max_characters` | The maximum number of characters to be read. It will never read beyond the first 4095. | A number | `254`
+//!
+//! Placeholder | Value
+//! ------------|-------
+//! `$title` | A descriptive title for your path (e.g. "VPN")
+//! `$content` | The first `max_characters` characters in the file.
+//! `$error` | In case there was an error reading the file.
+//!
+//! # Example
+//! ```toml
+//! [[module]]
+//! module = "file_contents"
+//! title = "UPTIME"
+//! path = "/proc/uptime"
+//! format = "$title: $content"
+//! max_characters = 6
+
 use std::sync::Arc;
 
 use bytes::BytesMut;
@@ -20,7 +48,7 @@ pub(crate) async fn run(config: Config, bridge: Bridge) -> Result<()> {
     let mut timer = bridge.timer().start();
     let format = config.format.unwrap_or("$title: $content".parse()?);
     let format_bad = config.format_bad.unwrap_or("$title: $error".parse()?);
-    let max_chars = config.max_characters.unwrap_or(255);
+    let max_chars = config.max_characters.unwrap_or(254).min(4095);
 
     loop {
         let contents = read_contents(&config.path, max_chars).await;
