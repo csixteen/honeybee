@@ -69,6 +69,7 @@ You can consult the [documentation](https://csixteen.github.io/honeybee/honeybee
 | File Contents   | :x:                |
 | IPv4 Address    | :x:                |
 | IPv6 Address    | :x:                |
+| Wireless Info   | :x:                |
 | Volume          | :x:                |
 
 ## Output format
