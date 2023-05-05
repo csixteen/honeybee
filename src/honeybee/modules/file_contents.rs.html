@@ -68,6 +68,8 @@
 <a href="#68" id="68">68</a>
 <a href="#69" id="69">69</a>
 <a href="#70" id="70">70</a>
+<a href="#71" id="71">71</a>
+<a href="#72" id="72">72</a>
 </pre><pre class="rust"><code><span class="kw">use </span>std::sync::Arc;
 
 <span class="kw">use </span>bytes::BytesMut;
@@ -100,8 +102,10 @@
         };
 
         <span class="kw">if </span>contents.is_err() {
+            widget.set_state(WidgetState::Critical);
             widget.set_format(format_bad.clone());
         } <span class="kw">else </span>{
+            widget.set_state(WidgetState::Normal);
             widget.set_format(format.clone());
         }
 
