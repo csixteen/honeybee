@@ -30,6 +30,7 @@
 //!
 //! [`valid identifiers`]: https://docs.rs/chrono/latest/chrono/format/strftime/index.html
 //! [`TZ identifier`]: https://en.wikipedia.org/wiki/List_of_tz_database_time_zones
+
 use chrono::{Local, Utc};
 use chrono_tz::Tz;
 
@@ -38,8 +39,7 @@ use super::prelude::*;
 #[derive(Clone, Debug, SmartDefault, PartialEq, Deserialize)]
 pub struct Config {
     title: String,
-    #[default("%Y-%m-%d %H:%M %Z")]
-    format: String,
+    format: Option<String>,
     #[serde(default)]
     timezone: TimeZone,
 }
@@ -48,14 +48,18 @@ pub(crate) async fn run(config: Config, bridge: Bridge) -> Result<()> {
     let mut widget = Widget::new().with_instance(config.title);
     widget.set_format(Format::new().with_default("$time"));
     let mut timer = bridge.timer().start();
+    let format = match config.format {
+        None => "%Y-%m-%d %H:%M %Z".to_string(),
+        Some(f) => f,
+    };
 
     loop {
         let t = match &config.timezone {
-            TimeZone::Utc => Utc::now().format(&config.format),
-            TimeZone::Local => Local::now().format(&config.format),
+            TimeZone::Utc => Utc::now().format(&format),
+            TimeZone::Local => Local::now().format(&format),
             TimeZone::TimeZone(tz) => {
                 let ttz: Tz = tz.parse().unwrap();
-                Utc::now().with_timezone(&ttz).format(&config.format)
+                Utc::now().with_timezone(&ttz).format(&format)
             }
         };
 

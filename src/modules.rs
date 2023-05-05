@@ -32,6 +32,7 @@ enum ModuleState {
 crate::modules!(
     battery,
     disk,
+    file_contents,
     load_avg,
     #[cfg(target_os = "linux")]
     memory,

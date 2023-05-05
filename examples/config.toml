@@ -8,10 +8,8 @@ format = "/: $avail"
 
 [[module]]
 module = "memory"
+format = "$used"
 format_degraded = "[$available / $percentage_available]"
-
-[module.format]
-full = "$used"
 
 [[module]]
 module = "battery"
@@ -27,7 +25,6 @@ threshold_type = "percentage"
 [[module]]
 module = "time"
 title = "local"
-format = "%Y-%m-%d %H:%M %Z"
 
 [[module]]
 module = "load_avg"
@@ -42,3 +39,9 @@ path = "/non/existing/path"
 module = "run_watch"
 title = "rofi"
 pidfile = "/var/run/user/1000/rofi.pid"
+
+[[module]]
+module = "file_contents"
+title = "Uptime"
+path = "/proc/uptime"
+max_characters = 5

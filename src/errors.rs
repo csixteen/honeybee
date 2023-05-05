@@ -47,9 +47,9 @@ impl Error {
 
 impl fmt::Display for Error {
     fn fmt(&self, f: &mut Formatter<'_>) -> fmt::Result {
-        write!(f, "{} ", self.kind)?;
-        if let Some(m) = &self.message {
-            f.write_str(m)?;
+        f.write_str(self.message.as_deref().unwrap_or("Error"))?;
+        if let Some(source) = &self.source {
+            write!(f, ". (Source {source})")?;
         }
 
         Ok(())
