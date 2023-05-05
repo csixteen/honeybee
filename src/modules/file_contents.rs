@@ -30,8 +30,10 @@ pub(crate) async fn run(config: Config, bridge: Bridge) -> Result<()> {
         };
 
         if contents.is_err() {
+            widget.set_state(WidgetState::Critical);
             widget.set_format(format_bad.clone());
         } else {
+            widget.set_state(WidgetState::Normal);
             widget.set_format(format.clone());
         }
 
