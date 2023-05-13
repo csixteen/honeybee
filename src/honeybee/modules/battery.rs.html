@@ -371,27 +371,6 @@
 <a href="#371" id="371">371</a>
 <a href="#372" id="372">372</a>
 <a href="#373" id="373">373</a>
-<a href="#374" id="374">374</a>
-<a href="#375" id="375">375</a>
-<a href="#376" id="376">376</a>
-<a href="#377" id="377">377</a>
-<a href="#378" id="378">378</a>
-<a href="#379" id="379">379</a>
-<a href="#380" id="380">380</a>
-<a href="#381" id="381">381</a>
-<a href="#382" id="382">382</a>
-<a href="#383" id="383">383</a>
-<a href="#384" id="384">384</a>
-<a href="#385" id="385">385</a>
-<a href="#386" id="386">386</a>
-<a href="#387" id="387">387</a>
-<a href="#388" id="388">388</a>
-<a href="#389" id="389">389</a>
-<a href="#390" id="390">390</a>
-<a href="#391" id="391">391</a>
-<a href="#392" id="392">392</a>
-<a href="#393" id="393">393</a>
-<a href="#394" id="394">394</a>
 </pre><pre class="rust"><code><span class="doccomment">//! Gets the status (charging, discharging, unknown, full), percentage, remaining time and
 //! power consumption (in Watts) of the given battery and when it&#39;s estimated to be empty.
 //!
@@ -629,7 +608,6 @@
 
 <span class="kw">impl </span>PowerSupplyInfo {
     <span class="doccomment">/// Reference: https://www.kernel.org/doc/html/latest/power/power_supply_class.html
-    </span><span class="attr">#[cfg(target_os = <span class="string">&quot;linux&quot;</span>)]
     </span><span class="kw">async fn </span>new&lt;T&gt;(<span class="kw-2">mut </span>reader: BufReader&lt;T&gt;, last_full_capacity: bool) -&gt; <span class="prelude-ty">Result</span>&lt;<span class="self">Self</span>&gt;
     <span class="kw">where
         </span>T: AsyncRead + Unpin,
@@ -704,26 +682,6 @@
         }
 
         <span class="prelude-val">Ok</span>(info)
-    }
-
-    <span class="attr">#[cfg(target_os = <span class="string">&quot;freebsd&quot;</span>)]
-    </span><span class="kw">async fn </span>new(_path: <span class="kw-2">&amp;</span>str) -&gt; <span class="prelude-ty">Result</span>&lt;<span class="self">Self</span>&gt; {
-        <span class="macro">todo!</span>()
-    }
-
-    <span class="attr">#[cfg(target_os = <span class="string">&quot;dragonfly&quot;</span>)]
-    </span><span class="kw">async fn </span>new(_path: <span class="kw-2">&amp;</span>str) -&gt; <span class="prelude-ty">Result</span>&lt;<span class="self">Self</span>&gt; {
-        <span class="macro">todo!</span>()
-    }
-
-    <span class="attr">#[cfg(target_os = <span class="string">&quot;netbsd&quot;</span>)]
-    </span><span class="kw">async fn </span>new(_path: <span class="kw-2">&amp;</span>str) -&gt; <span class="prelude-ty">Result</span>&lt;<span class="self">Self</span>&gt; {
-        <span class="macro">todo!</span>()
-    }
-
-    <span class="attr">#[cfg(target_os = <span class="string">&quot;openbsd&quot;</span>)]
-    </span><span class="kw">async fn </span>new(_path: <span class="kw-2">&amp;</span>str) -&gt; <span class="prelude-ty">Result</span>&lt;<span class="self">Self</span>&gt; {
-        <span class="macro">todo!</span>()
     }
 }
 
