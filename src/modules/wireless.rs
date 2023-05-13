@@ -16,13 +16,13 @@ pub(crate) async fn run(config: Config, bridge: Bridge) -> Result<()> {
 
     loop {
         widget.set_placeholders(map!(
-            "$quality" => Value::Text("CHANGE_ME"),
-            "$signal" => Value::Text("CHANGE_ME"),
-            "$noise" => Value::Text("CHANGE_ME"),
-            "$essid" => Value::Text("CHANGE_ME"),
-            "$frequency" => Value::Text("CHANGE_ME"),
-            "$ip" => Value::Text("CHANGE_ME"),
-            "$bitrate" => Value::Text("CHANGE_ME")
+            "$quality" => Value::Text("CHANGE_ME".into()),
+            "$signal" => Value::Text("CHANGE_ME".into()),
+            "$noise" => Value::Text("CHANGE_ME".into()),
+            "$essid" => Value::Text("CHANGE_ME".into()),
+            "$frequency" => Value::Text("CHANGE_ME".into()),
+            "$ip" => Value::Text("CHANGE_ME".into()),
+            "$bitrate" => Value::Text("CHANGE_ME".into())
         ));
 
         bridge.set_widget(widget.clone()).await?;
