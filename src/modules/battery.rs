@@ -235,7 +235,6 @@ struct PowerSupplyInfo {
 
 impl PowerSupplyInfo {
     /// Reference: https://www.kernel.org/doc/html/latest/power/power_supply_class.html
-    #[cfg(target_os = "linux")]
     async fn new<T>(mut reader: BufReader<T>, last_full_capacity: bool) -> Result<Self>
     where
         T: AsyncRead + Unpin,
@@ -310,26 +309,6 @@ impl PowerSupplyInfo {
         }
 
         Ok(info)
-    }
-
-    #[cfg(target_os = "freebsd")]
-    async fn new(_path: &str) -> Result<Self> {
-        todo!()
-    }
-
-    #[cfg(target_os = "dragonfly")]
-    async fn new(_path: &str) -> Result<Self> {
-        todo!()
-    }
-
-    #[cfg(target_os = "netbsd")]
-    async fn new(_path: &str) -> Result<Self> {
-        todo!()
-    }
-
-    #[cfg(target_os = "openbsd")]
-    async fn new(_path: &str) -> Result<Self> {
-        todo!()
     }
 }
 

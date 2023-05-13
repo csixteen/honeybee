@@ -30,6 +30,7 @@ enum ModuleState {
 }
 
 crate::modules!(
+    #[cfg(target_os = "linux")]
     battery,
     disk,
     file_contents,
@@ -38,5 +39,7 @@ crate::modules!(
     memory,
     path_exists,
     run_watch,
-    time
+    time,
+    #[cfg(target_os = "linux")]
+    wireless
 );
