@@ -13,6 +13,7 @@ pub mod config;
 pub mod errors;
 pub mod formatting;
 pub mod modules;
+mod net_iface;
 pub mod output;
 pub mod pango;
 pub mod protocol;
