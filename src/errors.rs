@@ -10,7 +10,7 @@ pub type Result<T, E = Error> = std::result::Result<T, E>;
 pub struct Error {
     pub kind: ErrorKind,
     pub message: Option<ErrorMsg>,
-    pub source: Option<Arc<dyn StdError>>,
+    pub source: Option<Arc<dyn StdError + Send + Sync + 'static>>,
 }
 
 #[derive(Clone, Debug, Eq, PartialEq)]
@@ -37,7 +37,7 @@ impl Error {
         }
     }
 
-    pub fn with_source(self, source: Arc<dyn StdError>) -> Self {
+    pub fn with_source(self, source: Arc<dyn StdError + Send + Sync + 'static>) -> Self {
         Self {
             source: Some(source),
             ..self

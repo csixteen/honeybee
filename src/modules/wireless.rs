@@ -1,63 +1,59 @@
+use std::collections::HashMap;
+
 use super::prelude::*;
+use crate::formatting::Placeholders;
+use crate::net_iface::NetworkInterface;
 
 #[derive(Clone, Debug, SmartDefault, PartialEq, Deserialize)]
 #[serde(default)]
 pub struct Config {
     interface: String,
-    #[default(Format::new().with_default("W: ($quality at $essid, $bitrate / $frequency) $ip"))]
+    #[default(Format::new().with_default("W: ($signal at $ssid, $bitrate / $frequency) $ipv4"))]
     format_up: Format,
-    #[default("W: down")]
-    format_down: String,
+    #[default(Format::new().with_default("W: down"))]
+    format_down: Format,
 }
 
 pub(crate) async fn run(config: Config, bridge: Bridge) -> Result<()> {
-    let mut widget = Widget::new();
     let mut timer = bridge.timer().start();
 
     loop {
-        widget.set_placeholders(map!(
-            "$quality" => Value::Text("CHANGE_ME".into()),
-            "$signal" => Value::Text("CHANGE_ME".into()),
-            "$noise" => Value::Text("CHANGE_ME".into()),
-            "$essid" => Value::Text("CHANGE_ME".into()),
-            "$frequency" => Value::Text("CHANGE_ME".into()),
-            "$ip" => Value::Text("CHANGE_ME".into()),
-            "$bitrate" => Value::Text("CHANGE_ME".into())
-        ));
+        let mut widget = Widget::new();
 
-        bridge.set_widget(widget.clone()).await?;
+        match NetworkInterface::new(&config.interface).await? {
+            None => {
+                widget.set_format(config.format_down.clone());
+            }
+            Some(iface) => {
+                widget.set_format(config.format_up.clone());
+
+                let mut ph: Placeholders = HashMap::new();
+                if let Some(ipv4) = iface.ipv4 {
+                    ph.insert("$ipv4".to_string(), Value::Text(ipv4.to_string()));
+                }
+
+                if let Some(ipv6) = iface.ipv4 {
+                    ph.insert("$ipv6".to_string(), Value::Text(ipv6.to_string()));
+                }
+
+                if let Some(ssid) = iface.ssid() {
+                    ph.insert("$ssid".to_string(), Value::Text(ssid));
+                }
+
+                if let Some(signal) = iface.signal() {
+                    ph.insert("$signal".to_string(), Value::percentage(signal));
+                }
+
+                widget.set_placeholders(ph);
+            }
+        }
+
+        bridge.set_widget(widget).await?;
 
         loop {
             tokio::select! {
                 _ = timer.tick() => break,
             }
-        }
-    }
-}
-
-const IW_ESSID_MAX_SIZE: usize = 32;
-
-#[derive(Clone, Debug, SmartDefault)]
-struct WirelessInfo {
-    flags: u32,
-    essid: String,
-    bssid: [u8; libc::ETH_ALEN as usize],
-    quality: i32,
-    quality_max: i32,
-    quality_avg: i32,
-    signal_level: i32,
-    signal_level_max: i32,
-    noise_level: i32,
-    noise_level_max: i32,
-    bitrate: u64,
-    frequency: f64,
-}
-
-impl WirelessInfo {
-    fn new() -> Self {
-        Self {
-            essid: String::with_capacity(IW_ESSID_MAX_SIZE),
-            ..Default::default()
         }
     }
 }

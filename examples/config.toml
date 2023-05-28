@@ -3,6 +3,10 @@ colors = true
 color_good = "#00AA00"
 
 [[module]]
+module = "wireless"
+interface = "wlan0"
+
+[[module]]
 module = "disk"
 format = "/: $avail"
 
