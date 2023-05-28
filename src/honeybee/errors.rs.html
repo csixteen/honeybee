@@ -128,7 +128,7 @@
 </span><span class="kw">pub struct </span>Error {
     <span class="kw">pub </span>kind: ErrorKind,
     <span class="kw">pub </span>message: <span class="prelude-ty">Option</span>&lt;ErrorMsg&gt;,
-    <span class="kw">pub </span>source: <span class="prelude-ty">Option</span>&lt;Arc&lt;<span class="kw">dyn </span>StdError&gt;&gt;,
+    <span class="kw">pub </span>source: <span class="prelude-ty">Option</span>&lt;Arc&lt;<span class="kw">dyn </span>StdError + Send + Sync + <span class="lifetime">&#39;static</span>&gt;&gt;,
 }
 
 <span class="attr">#[derive(Clone, Debug, Eq, PartialEq)]
@@ -155,7 +155,7 @@
         }
     }
 
-    <span class="kw">pub fn </span>with_source(<span class="self">self</span>, source: Arc&lt;<span class="kw">dyn </span>StdError&gt;) -&gt; <span class="self">Self </span>{
+    <span class="kw">pub fn </span>with_source(<span class="self">self</span>, source: Arc&lt;<span class="kw">dyn </span>StdError + Send + Sync + <span class="lifetime">&#39;static</span>&gt;) -&gt; <span class="self">Self </span>{
         <span class="self">Self </span>{
             source: <span class="prelude-val">Some</span>(source),
             ..<span class="self">self

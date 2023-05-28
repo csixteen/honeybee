@@ -57,70 +57,62 @@
 <a href="#57" id="57">57</a>
 <a href="#58" id="58">58</a>
 <a href="#59" id="59">59</a>
-<a href="#60" id="60">60</a>
-<a href="#61" id="61">61</a>
-<a href="#62" id="62">62</a>
-<a href="#63" id="63">63</a>
-</pre><pre class="rust"><code><span class="kw">use </span><span class="kw">super</span>::prelude::<span class="kw-2">*</span>;
+</pre><pre class="rust"><code><span class="kw">use </span>std::collections::HashMap;
+
+<span class="kw">use </span><span class="kw">super</span>::prelude::<span class="kw-2">*</span>;
+<span class="kw">use </span><span class="kw">crate</span>::formatting::Placeholders;
+<span class="kw">use </span><span class="kw">crate</span>::net_iface::NetworkInterface;
 
 <span class="attr">#[derive(Clone, Debug, SmartDefault, PartialEq, Deserialize)]
 #[serde(default)]
 </span><span class="kw">pub struct </span>Config {
     interface: String,
-    <span class="attr">#[default(Format::new().with_default(<span class="string">&quot;W: ($quality at $essid, $bitrate / $frequency) $ip&quot;</span>))]
+    <span class="attr">#[default(Format::new().with_default(<span class="string">&quot;W: ($signal at $ssid, $bitrate / $frequency) $ipv4&quot;</span>))]
     </span>format_up: Format,
-    <span class="attr">#[default(<span class="string">&quot;W: down&quot;</span>)]
-    </span>format_down: String,
+    <span class="attr">#[default(Format::new().with_default(<span class="string">&quot;W: down&quot;</span>))]
+    </span>format_down: Format,
 }
 
 <span class="kw">pub</span>(<span class="kw">crate</span>) <span class="kw">async fn </span>run(config: Config, bridge: Bridge) -&gt; <span class="prelude-ty">Result</span>&lt;()&gt; {
-    <span class="kw">let </span><span class="kw-2">mut </span>widget = Widget::new();
     <span class="kw">let </span><span class="kw-2">mut </span>timer = bridge.timer().start();
 
     <span class="kw">loop </span>{
-        widget.set_placeholders(<span class="macro">map!</span>(
-            <span class="string">&quot;$quality&quot; </span>=&gt; Value::Text(<span class="string">&quot;CHANGE_ME&quot;</span>.into()),
-            <span class="string">&quot;$signal&quot; </span>=&gt; Value::Text(<span class="string">&quot;CHANGE_ME&quot;</span>.into()),
-            <span class="string">&quot;$noise&quot; </span>=&gt; Value::Text(<span class="string">&quot;CHANGE_ME&quot;</span>.into()),
-            <span class="string">&quot;$essid&quot; </span>=&gt; Value::Text(<span class="string">&quot;CHANGE_ME&quot;</span>.into()),
-            <span class="string">&quot;$frequency&quot; </span>=&gt; Value::Text(<span class="string">&quot;CHANGE_ME&quot;</span>.into()),
-            <span class="string">&quot;$ip&quot; </span>=&gt; Value::Text(<span class="string">&quot;CHANGE_ME&quot;</span>.into()),
-            <span class="string">&quot;$bitrate&quot; </span>=&gt; Value::Text(<span class="string">&quot;CHANGE_ME&quot;</span>.into())
-        ));
+        <span class="kw">let </span><span class="kw-2">mut </span>widget = Widget::new();
 
-        bridge.set_widget(widget.clone()).<span class="kw">await</span><span class="question-mark">?</span>;
+        <span class="kw">match </span>NetworkInterface::new(<span class="kw-2">&amp;</span>config.interface).<span class="kw">await</span><span class="question-mark">? </span>{
+            <span class="prelude-val">None </span>=&gt; {
+                widget.set_format(config.format_down.clone());
+            }
+            <span class="prelude-val">Some</span>(iface) =&gt; {
+                widget.set_format(config.format_up.clone());
+
+                <span class="kw">let </span><span class="kw-2">mut </span>ph: Placeholders = HashMap::new();
+                <span class="kw">if let </span><span class="prelude-val">Some</span>(ipv4) = iface.ipv4 {
+                    ph.insert(<span class="string">&quot;$ipv4&quot;</span>.to_string(), Value::Text(ipv4.to_string()));
+                }
+
+                <span class="kw">if let </span><span class="prelude-val">Some</span>(ipv6) = iface.ipv4 {
+                    ph.insert(<span class="string">&quot;$ipv6&quot;</span>.to_string(), Value::Text(ipv6.to_string()));
+                }
+
+                <span class="kw">if let </span><span class="prelude-val">Some</span>(ssid) = iface.ssid() {
+                    ph.insert(<span class="string">&quot;$ssid&quot;</span>.to_string(), Value::Text(ssid));
+                }
+
+                <span class="kw">if let </span><span class="prelude-val">Some</span>(signal) = iface.signal() {
+                    ph.insert(<span class="string">&quot;$signal&quot;</span>.to_string(), Value::percentage(signal));
+                }
+
+                widget.set_placeholders(ph);
+            }
+        }
+
+        bridge.set_widget(widget).<span class="kw">await</span><span class="question-mark">?</span>;
 
         <span class="kw">loop </span>{
             <span class="macro">tokio::select! </span>{
                 <span class="kw">_ </span>= timer.tick() =&gt; <span class="kw">break</span>,
             }
-        }
-    }
-}
-
-<span class="kw">const </span>IW_ESSID_MAX_SIZE: usize = <span class="number">32</span>;
-
-<span class="attr">#[derive(Clone, Debug, SmartDefault)]
-</span><span class="kw">struct </span>WirelessInfo {
-    flags: u32,
-    essid: String,
-    bssid: [u8; libc::ETH_ALEN <span class="kw">as </span>usize],
-    quality: i32,
-    quality_max: i32,
-    quality_avg: i32,
-    signal_level: i32,
-    signal_level_max: i32,
-    noise_level: i32,
-    noise_level_max: i32,
-    bitrate: u64,
-    frequency: f64,
-}
-
-<span class="kw">impl </span>WirelessInfo {
-    <span class="kw">fn </span>new() -&gt; <span class="self">Self </span>{
-        <span class="self">Self </span>{
-            essid: String::with_capacity(IW_ESSID_MAX_SIZE),
-            ..Default::default()
         }
     }
 }
