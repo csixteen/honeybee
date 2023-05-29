@@ -1,1 +1,1 @@
-window.SIDEBAR_ITEMS = {"enum":["IecSymbol","SiSymbol","Unit"],"fn":["bytes_to_unit","unit_to_bytes"]};
+window.SIDEBAR_ITEMS = {"enum":["IecSymbol","SiSymbol","Unit"],"fn":["bitrate","bytes_to_unit","unit_to_bytes"]};

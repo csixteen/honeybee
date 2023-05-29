@@ -220,15 +220,100 @@
 <a href="#220" id="220">220</a>
 <a href="#221" id="221">221</a>
 <a href="#222" id="222">222</a>
-</pre><pre class="rust"><code><span class="kw">use </span>std::net::{Ipv4Addr, Ipv6Addr};
+<a href="#223" id="223">223</a>
+<a href="#224" id="224">224</a>
+<a href="#225" id="225">225</a>
+<a href="#226" id="226">226</a>
+<a href="#227" id="227">227</a>
+<a href="#228" id="228">228</a>
+<a href="#229" id="229">229</a>
+<a href="#230" id="230">230</a>
+<a href="#231" id="231">231</a>
+<a href="#232" id="232">232</a>
+<a href="#233" id="233">233</a>
+<a href="#234" id="234">234</a>
+<a href="#235" id="235">235</a>
+<a href="#236" id="236">236</a>
+<a href="#237" id="237">237</a>
+<a href="#238" id="238">238</a>
+<a href="#239" id="239">239</a>
+<a href="#240" id="240">240</a>
+<a href="#241" id="241">241</a>
+<a href="#242" id="242">242</a>
+<a href="#243" id="243">243</a>
+<a href="#244" id="244">244</a>
+<a href="#245" id="245">245</a>
+<a href="#246" id="246">246</a>
+<a href="#247" id="247">247</a>
+<a href="#248" id="248">248</a>
+<a href="#249" id="249">249</a>
+<a href="#250" id="250">250</a>
+<a href="#251" id="251">251</a>
+<a href="#252" id="252">252</a>
+<a href="#253" id="253">253</a>
+<a href="#254" id="254">254</a>
+<a href="#255" id="255">255</a>
+<a href="#256" id="256">256</a>
+<a href="#257" id="257">257</a>
+<a href="#258" id="258">258</a>
+<a href="#259" id="259">259</a>
+<a href="#260" id="260">260</a>
+<a href="#261" id="261">261</a>
+<a href="#262" id="262">262</a>
+<a href="#263" id="263">263</a>
+<a href="#264" id="264">264</a>
+<a href="#265" id="265">265</a>
+<a href="#266" id="266">266</a>
+<a href="#267" id="267">267</a>
+<a href="#268" id="268">268</a>
+<a href="#269" id="269">269</a>
+<a href="#270" id="270">270</a>
+<a href="#271" id="271">271</a>
+<a href="#272" id="272">272</a>
+<a href="#273" id="273">273</a>
+<a href="#274" id="274">274</a>
+<a href="#275" id="275">275</a>
+<a href="#276" id="276">276</a>
+<a href="#277" id="277">277</a>
+<a href="#278" id="278">278</a>
+<a href="#279" id="279">279</a>
+<a href="#280" id="280">280</a>
+<a href="#281" id="281">281</a>
+<a href="#282" id="282">282</a>
+<a href="#283" id="283">283</a>
+<a href="#284" id="284">284</a>
+<a href="#285" id="285">285</a>
+<a href="#286" id="286">286</a>
+<a href="#287" id="287">287</a>
+<a href="#288" id="288">288</a>
+<a href="#289" id="289">289</a>
+<a href="#290" id="290">290</a>
+<a href="#291" id="291">291</a>
+<a href="#292" id="292">292</a>
+<a href="#293" id="293">293</a>
+<a href="#294" id="294">294</a>
+<a href="#295" id="295">295</a>
+<a href="#296" id="296">296</a>
+<a href="#297" id="297">297</a>
+<a href="#298" id="298">298</a>
+<a href="#299" id="299">299</a>
+<a href="#300" id="300">300</a>
+<a href="#301" id="301">301</a>
+<a href="#302" id="302">302</a>
+<a href="#303" id="303">303</a>
+<a href="#304" id="304">304</a>
+<a href="#305" id="305">305</a>
+<a href="#306" id="306">306</a>
+<a href="#307" id="307">307</a>
+</pre><pre class="rust"><code><span class="kw">use </span>neli::attr::Attribute;
+<span class="kw">use </span>std::net::{Ipv4Addr, Ipv6Addr};
 
 <span class="kw">use </span>neli::consts::nl::{NlmF, NlmFFlags, Nlmsg};
-<span class="kw">use </span>neli::consts::rtnl::{Ifa, IfaFFlags, RtAddrFamily, RtScope, Rtm};
+<span class="kw">use </span>neli::consts::rtnl::{Arphrd, Ifa, IfaFFlags, IffFlags, Ifla, RtAddrFamily, RtScope, Rtm};
 <span class="kw">use </span>neli::consts::socket::NlFamily;
 <span class="kw">use </span>neli::nl::{NlPayload, Nlmsghdr};
-<span class="kw">use </span>neli::rtnl::Ifaddrmsg;
-<span class="kw">use </span>neli::socket::tokio::NlSocket;
-<span class="kw">use </span>neli::socket::NlSocketHandle;
+<span class="kw">use </span>neli::rtnl::{Ifaddrmsg, Ifinfomsg};
+<span class="kw">use </span>neli::socket::{tokio::NlSocket, NlSocketHandle};
 <span class="kw">use </span>neli::types::RtBuffer;
 <span class="kw">use </span>neli_wifi::AsyncSocket;
 <span class="kw">use </span>nix::net::if_::if_nametoindex;
@@ -238,29 +323,35 @@
 
 <span class="attr">#[derive(Clone, Debug, SmartDefault, PartialEq)]
 </span><span class="kw">pub struct </span>NetworkInterface {
-    index: u32,
+    index: i32,
     name: String,
     <span class="kw">pub </span>ipv4: <span class="prelude-ty">Option</span>&lt;Ipv4Addr&gt;,
     <span class="kw">pub </span>ipv6: <span class="prelude-ty">Option</span>&lt;Ipv6Addr&gt;,
     wifi_info: <span class="prelude-ty">Option</span>&lt;WirelessInfo&gt;,
-    <span class="kw">pub </span>stats: <span class="prelude-ty">Option</span>&lt;InterfaceStats&gt;,
-    <span class="kw">pub </span>is_up: bool,
+    <span class="kw">pub </span>stats: <span class="prelude-ty">Option</span>&lt;RtnlLinkStats&gt;,
 }
 
 <span class="kw">impl </span>NetworkInterface {
     <span class="kw">pub async fn </span>new(name: <span class="kw-2">&amp;</span>str) -&gt; <span class="prelude-ty">Result</span>&lt;<span class="prelude-ty">Option</span>&lt;<span class="self">Self</span>&gt;&gt; {
-        <span class="kw">let </span>if_index: u32 = if_nametoindex(name)
-            .or_error(|| <span class="macro">format!</span>(<span class="string">&quot;Couldn&#39;t find index for interface {name}&quot;</span>))<span class="question-mark">?</span>;
+        <span class="kw">let </span>if_index = if_nametoindex(name)
+            .or_error(|| <span class="macro">format!</span>(<span class="string">&quot;Couldn&#39;t find index for interface {name}&quot;</span>))<span class="question-mark">?
+            </span><span class="kw">as </span>i32;
 
         <span class="kw">let </span><span class="kw-2">mut </span>socket = NlSocket::new(
             NlSocketHandle::connect(NlFamily::Route, <span class="prelude-val">None</span>, <span class="kw-2">&amp;</span>[]).error(<span class="string">&quot;Netlink socket error&quot;</span>)<span class="question-mark">?</span>,
         )
         .error(<span class="string">&quot;Netlink socket error&quot;</span>)<span class="question-mark">?</span>;
 
-        <span class="kw">let </span>ipv4 = get_ipv4(<span class="kw-2">&amp;mut </span>socket, if_index <span class="kw">as </span>i32).<span class="kw">await</span><span class="question-mark">?</span>;
-        <span class="kw">let </span>ipv6 = get_ipv6(<span class="kw-2">&amp;mut </span>socket, if_index <span class="kw">as </span>i32).<span class="kw">await</span><span class="question-mark">?</span>;
-
+        <span class="kw">let </span>ipv4 = get_ipv4(<span class="kw-2">&amp;mut </span>socket, if_index).<span class="kw">await</span><span class="question-mark">?</span>;
+        <span class="kw">let </span>ipv6 = get_ipv6(<span class="kw-2">&amp;mut </span>socket, if_index).<span class="kw">await</span><span class="question-mark">?</span>;
         <span class="kw">let </span>wifi_info = WirelessInfo::new(if_index).<span class="kw">await</span><span class="question-mark">?</span>;
+        <span class="kw">let </span>stats = RtnlLinkStats::new(<span class="kw-2">&amp;mut </span>socket, if_index)
+            .<span class="kw">await
+            </span>.map_err(|e| Error::new(<span class="string">&quot;CHANGE_ME&quot;</span>))
+            .error(<span class="string">&quot;Couldn&#39;t get interface stats&quot;</span>)<span class="question-mark">?</span>;
+        <span class="kw">if </span>stats.is_none() {
+            <span class="kw">return </span><span class="prelude-val">Ok</span>(<span class="prelude-val">None</span>);
+        }
 
         <span class="prelude-val">Ok</span>(<span class="prelude-val">Some</span>(<span class="self">Self </span>{
             index: if_index,
@@ -268,7 +359,7 @@
             ipv4,
             ipv6,
             wifi_info,
-            ..Default::default()
+            stats,
         }))
     }
 
@@ -289,6 +380,37 @@
     }
 }
 
+<span class="macro">macro_rules! </span>rtnetlink_recv {
+    (<span class="macro-nonterminal">$socket</span>:ident, <span class="macro-nonterminal">$nl_payload</span>:ident, <span class="macro-nonterminal">$nl_type</span>:expr, <span class="macro-nonterminal">$if_index</span>:expr, <span class="macro-nonterminal">$if_attr</span>:ident, <span class="macro-nonterminal">$payload</span>:ident : <span class="macro-nonterminal">$ptype</span>:ty =&gt; $(<span class="macro-nonterminal">$body</span>:tt)<span class="kw-2">*</span>) =&gt; {
+        <span class="kw">let </span>nl_header = Nlmsghdr::new(
+            <span class="prelude-val">None</span>,
+            <span class="macro-nonterminal">$nl_type</span>,
+            NlmFFlags::new(<span class="kw-2">&amp;</span>[NlmF::Request, NlmF::Dump]),
+            <span class="prelude-val">None</span>,
+            <span class="prelude-val">None</span>,
+            NlPayload::Payload(<span class="macro-nonterminal">$nl_payload</span>),
+        );
+        <span class="macro-nonterminal">$socket</span>.send(<span class="kw-2">&amp;</span>nl_header).<span class="kw">await</span><span class="question-mark">?</span>;
+
+        <span class="lifetime">&#39;msgs</span>: <span class="kw">loop </span>{
+            <span class="kw">let </span>msgs = <span class="macro-nonterminal">$socket</span>.recv::&lt;u16, <span class="macro-nonterminal">$ptype</span>&gt;(<span class="kw-2">&amp;mut </span>Vec::new()).<span class="kw">await</span><span class="question-mark">?</span>;
+            <span class="kw">for </span>msg <span class="kw">in </span>msgs {
+                <span class="kw">if </span>msg.nl_type == u16::from(Nlmsg::Done) {
+                    <span class="kw">break </span><span class="lifetime">&#39;msgs</span>;
+                }
+
+                <span class="kw">if let </span>NlPayload::Payload(<span class="macro-nonterminal">$payload</span>) = msg.nl_payload {
+                    <span class="kw">if </span><span class="macro-nonterminal">$payload</span>.<span class="macro-nonterminal">$if_attr </span>!= <span class="macro-nonterminal">$if_index </span>{
+                        <span class="kw">continue</span>;
+                    }
+
+                    $(<span class="macro-nonterminal">$body</span>)*
+                }
+            }
+        }
+    };
+}
+
 <span class="kw">async fn </span>get_ip_addr&lt;<span class="kw">const </span>T: usize&gt;(
     socket: <span class="kw-2">&amp;mut </span>NlSocket,
     if_index: i32,
@@ -302,37 +424,24 @@
         ifa_index: <span class="number">0</span>,
         rtattrs: RtBuffer::new(),
     };
-    <span class="kw">let </span>nl_header = Nlmsghdr::new(
-        <span class="prelude-val">None</span>,
-        Rtm::Getaddr,
-        NlmFFlags::new(<span class="kw-2">&amp;</span>[NlmF::Request, NlmF::Dump]),
-        <span class="prelude-val">None</span>,
-        <span class="prelude-val">None</span>,
-        NlPayload::Payload(ifaddrmsg),
-    );
-    socket.send(<span class="kw-2">&amp;</span>nl_header).<span class="kw">await</span><span class="question-mark">?</span>;
 
     <span class="kw">let </span><span class="kw-2">mut </span>res = <span class="prelude-val">None</span>;
-    <span class="kw">let </span>msgs = socket.recv::&lt;u16, Ifaddrmsg&gt;(<span class="kw-2">&amp;mut </span>Vec::new()).<span class="kw">await</span><span class="question-mark">?</span>;
-    <span class="kw">for </span>msg <span class="kw">in </span>msgs {
-        <span class="kw">if </span>msg.nl_type == u16::from(Nlmsg::Done) {
-            <span class="kw">break</span>;
-        }
-        <span class="kw">if let </span>NlPayload::Payload(p) = msg.nl_payload {
-            <span class="kw">if </span>p.ifa_index != if_index || RtScope::from(p.ifa_scope) != RtScope::Universe {
-                <span class="kw">continue</span>;
-            }
 
-            <span class="kw">let </span>rtattrs = p.rtattrs.get_attr_handle();
-            <span class="kw">let </span><span class="prelude-val">Some</span>(attr) = rtattrs
-                .get_attribute(Ifa::Local)
-                .or_else(|| rtattrs.get_attribute(Ifa::Address)) <span class="kw">else </span>{ <span class="kw">continue</span>; };
-
-            <span class="kw">if let </span><span class="prelude-val">Ok</span>(a) = attr.rta_payload.as_ref().try_into() {
-                res = <span class="prelude-val">Some</span>(a);
-            }
+    <span class="macro">rtnetlink_recv!</span>(socket, ifaddrmsg, Rtm::Getaddr, if_index, ifa_index, p: Ifaddrmsg =&gt; {
+        <span class="kw">if </span>RtScope::from(p.ifa_scope) != RtScope::Universe {
+            <span class="kw">continue</span>;
         }
-    }
+
+        <span class="kw">let </span>rtattrs = p.rtattrs.get_attr_handle();
+        <span class="kw">let </span><span class="prelude-val">Some</span>(attr) = rtattrs
+            .get_attribute(Ifa::Local)
+            .or_else(|| rtattrs.get_attribute(Ifa::Address)) <span class="kw">else </span>{ <span class="kw">continue</span>; };
+
+        <span class="kw">if let </span><span class="prelude-val">Ok</span>(a) = attr.rta_payload.as_ref().try_into() {
+            res = <span class="prelude-val">Some</span>(a);
+        }
+    });
+
     <span class="prelude-val">Ok</span>(res)
 }
 
@@ -383,7 +492,7 @@
         <span class="number">100. </span>- <span class="number">70. </span>* ((SIGNAL_MAX_DBM - xbm) / (SIGNAL_MAX_DBM - NOISE_FLOOR_DBM))
     }
 
-    <span class="kw">async fn </span>new(iface_index: u32) -&gt; <span class="prelude-ty">Result</span>&lt;<span class="prelude-ty">Option</span>&lt;<span class="self">Self</span>&gt;&gt; {
+    <span class="kw">async fn </span>new(iface_index: i32) -&gt; <span class="prelude-ty">Result</span>&lt;<span class="prelude-ty">Option</span>&lt;<span class="self">Self</span>&gt;&gt; {
         <span class="kw">let </span><span class="kw-2">mut </span>socket = <span class="kw">match </span>AsyncSocket::connect() {
             <span class="prelude-val">Ok</span>(s) =&gt; s,
             <span class="prelude-val">Err</span>(<span class="kw">_</span>) =&gt; <span class="kw">return </span><span class="prelude-val">Ok</span>(<span class="prelude-val">None</span>),
@@ -396,7 +505,7 @@
 
         <span class="kw">for </span>iface <span class="kw">in </span>interfaces {
             <span class="kw">if let </span><span class="prelude-val">Some</span>(index) = iface.index {
-                <span class="kw">if </span>index <span class="kw">as </span>u32 != iface_index {
+                <span class="kw">if </span>index != iface_index {
                     <span class="kw">continue</span>;
                 }
 
@@ -438,9 +547,70 @@
 }
 
 <span class="attr">#[derive(Clone, Debug, SmartDefault, Eq, PartialEq)]
-</span><span class="kw">pub struct </span>InterfaceStats {
+</span><span class="kw">pub struct </span>RtnlLinkStats {
     <span class="kw">pub </span>rx_bytes: u64,
     <span class="kw">pub </span>tx_bytes: u64,
+}
+
+<span class="kw">impl </span>RtnlLinkStats {
+    <span class="kw">async fn </span>new(
+        socket: <span class="kw-2">&amp;mut </span>NlSocket,
+        if_index: i32,
+    ) -&gt; <span class="prelude-ty">Result</span>&lt;<span class="prelude-ty">Option</span>&lt;<span class="self">Self</span>&gt;, Box&lt;<span class="kw">dyn </span>StdError + Send + Sync + <span class="lifetime">&#39;static</span>&gt;&gt; {
+        <span class="kw">let </span>ifinfomsg = Ifinfomsg::new(
+            RtAddrFamily::Unspecified,
+            Arphrd::None,
+            <span class="number">0</span>,
+            IffFlags::empty(),
+            IffFlags::empty(),
+            RtBuffer::new(),
+        );
+
+        <span class="kw">let </span><span class="kw-2">mut </span>res = <span class="prelude-val">None</span>;
+
+        <span class="macro">rtnetlink_recv!</span>(socket, ifinfomsg, Rtm::Getlink, if_index, ifi_index, p: Ifinfomsg =&gt; {
+            <span class="kw">for </span>rtattr <span class="kw">in </span>p.rtattrs.iter() {
+                <span class="kw">match </span>rtattr.rta_type {
+                    Ifla::Operstate =&gt; {
+                        <span class="kw">let </span>state = rtattr.get_payload_as::&lt;u8&gt;()<span class="question-mark">?</span>;
+                        <span class="comment">// https://www.kernel.org/doc/html/latest/networking/operstates.html#tlv-ifla-operstate
+                        </span><span class="kw">if </span>state != <span class="number">6 </span>{
+                            <span class="kw">return </span><span class="prelude-val">Ok</span>(<span class="prelude-val">None</span>);
+                        }
+                    }
+                    Ifla::Stats64 =&gt; {
+                        res = <span class="prelude-val">Some</span>(<span class="self">Self</span>::from_rtnl_link_stats64(rtattr.payload().as_ref())<span class="question-mark">?</span>)
+                    }
+                    <span class="kw">_ </span>=&gt; (),
+                }
+            }
+        });
+
+        <span class="prelude-val">Ok</span>(res)
+    }
+
+    <span class="comment">// https://www.kernel.org/doc/html/v5.11/networking/statistics.html#c.rtnl_link_stats64 :
+    // struct rtnl_link_stats {
+    //   __u64 rx_packets,
+    //   __u64 tx_packets,
+    //   __u64 rx_bytes,
+    //   __u64 tx_bytes,
+    //   -- snip --
+    // }
+    // For the purpose of upload and download speed, we only care about rx_bytes and tx_bytes.
+    </span><span class="kw">fn </span>from_rtnl_link_stats64(stats: <span class="kw-2">&amp;</span>[u8]) -&gt; <span class="prelude-ty">Result</span>&lt;<span class="self">Self</span>&gt; {
+        <span class="kw">if </span>stats.len() &lt; <span class="number">32 </span>{
+            <span class="kw">return </span><span class="prelude-val">Err</span>(Error::new(<span class="macro">format!</span>(
+                <span class="string">&quot;Bad contents for interface stats: {stats:?}&quot;
+            </span>)));
+        }
+
+        <span class="kw">let </span>stats_ptr = stats.as_ptr() <span class="kw">as </span><span class="kw-2">*const </span>u64;
+        <span class="prelude-val">Ok</span>(<span class="self">Self </span>{
+            rx_bytes: <span class="kw">unsafe </span>{ stats_ptr.add(<span class="number">2</span>).read_unaligned() },
+            tx_bytes: <span class="kw">unsafe </span>{ stats_ptr.add(<span class="number">3</span>).read_unaligned() },
+        })
+    }
 }
 </code></pre></div>
 </section></main><div id="rustdoc-vars" data-root-path="../../" data-static-root-path="../../static.files/" data-current-crate="honeybee" data-themes="" data-resource-suffix="" data-rustdoc-version="1.69.0 (84c898d65 2023-04-16)" data-search-js="search-8a59a8356673ec1f.js" data-settings-js="settings-f0c5c39777a9a2f6.js" data-settings-css="settings-0bcba95ff279c1db.css" ></div></body></html>

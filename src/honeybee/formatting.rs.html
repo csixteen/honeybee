@@ -207,6 +207,14 @@
 <a href="#207" id="207">207</a>
 <a href="#208" id="208">208</a>
 <a href="#209" id="209">209</a>
+<a href="#210" id="210">210</a>
+<a href="#211" id="211">211</a>
+<a href="#212" id="212">212</a>
+<a href="#213" id="213">213</a>
+<a href="#214" id="214">214</a>
+<a href="#215" id="215">215</a>
+<a href="#216" id="216">216</a>
+<a href="#217" id="217">217</a>
 </pre><pre class="rust"><code><span class="doccomment">//! Everything related to format strings, placeholders and value types.
 </span><span class="kw">use </span>std::collections::HashMap;
 <span class="kw">use </span>std::fmt::{<span class="self">self</span>, Formatter};
@@ -218,7 +226,7 @@
 
 <span class="kw">use </span><span class="kw">crate</span>::errors::<span class="kw-2">*</span>;
 <span class="kw">use </span><span class="kw">crate</span>::pango::<span class="kw-2">*</span>;
-<span class="kw">use </span><span class="kw">crate</span>::units::{bytes_to_unit, Unit};
+<span class="kw">use </span><span class="kw">crate</span>::units::{bitrate, bytes_to_unit, Unit};
 
 <span class="doccomment">/// Format strings for `full_text` and `short_text`.
 </span><span class="attr">#[derive(Clone, Debug, SmartDefault, Eq, PartialEq)]
@@ -361,6 +369,8 @@
         unit: Unit,
         decimals: usize,
     },
+    Bits(f64),
+    Hertz(f64),
 }
 
 <span class="kw">impl </span>fmt::Display <span class="kw">for </span>Value {
@@ -378,6 +388,8 @@
                 <span class="kw">let </span>(v, u) = bytes_to_unit(<span class="kw-2">*</span>value, <span class="kw-2">*</span>unit);
                 <span class="macro">write!</span>(f, <span class="string">&quot;{0:.2$} {1}&quot;</span>, v, u, decimals)
             }
+            Value::Bits(b) =&gt; <span class="macro">write!</span>(f, <span class="string">&quot;{}&quot;</span>, bitrate(<span class="kw-2">*</span>b)),
+            Value::Hertz(h) =&gt; <span class="macro">write!</span>(f, <span class="string">&quot;{0:.1$} GHz&quot;</span>, h, <span class="number">1</span>),
         }
     }
 }
@@ -389,6 +401,10 @@
             unit,
             decimals,
         }
+    }
+
+    <span class="kw">pub fn </span>bits(value: f64) -&gt; Value {
+        <span class="self">Self</span>::Bits(value)
     }
 
     <span class="kw">pub fn </span>percentage(value: f64) -&gt; Value {
