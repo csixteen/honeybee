@@ -1,12 +1,12 @@
+use neli::attr::Attribute;
 use std::net::{Ipv4Addr, Ipv6Addr};
 
 use neli::consts::nl::{NlmF, NlmFFlags, Nlmsg};
-use neli::consts::rtnl::{Ifa, IfaFFlags, RtAddrFamily, RtScope, Rtm};
+use neli::consts::rtnl::{Arphrd, Ifa, IfaFFlags, IffFlags, Ifla, RtAddrFamily, RtScope, Rtm};
 use neli::consts::socket::NlFamily;
 use neli::nl::{NlPayload, Nlmsghdr};
-use neli::rtnl::Ifaddrmsg;
-use neli::socket::tokio::NlSocket;
-use neli::socket::NlSocketHandle;
+use neli::rtnl::{Ifaddrmsg, Ifinfomsg};
+use neli::socket::{tokio::NlSocket, NlSocketHandle};
 use neli::types::RtBuffer;
 use neli_wifi::AsyncSocket;
 use nix::net::if_::if_nametoindex;
@@ -16,29 +16,35 @@ use crate::errors::*;
 
 #[derive(Clone, Debug, SmartDefault, PartialEq)]
 pub struct NetworkInterface {
-    index: u32,
+    index: i32,
     name: String,
     pub ipv4: Option<Ipv4Addr>,
     pub ipv6: Option<Ipv6Addr>,
     wifi_info: Option<WirelessInfo>,
-    pub stats: Option<InterfaceStats>,
-    pub is_up: bool,
+    pub stats: Option<RtnlLinkStats>,
 }
 
 impl NetworkInterface {
     pub async fn new(name: &str) -> Result<Option<Self>> {
-        let if_index: u32 = if_nametoindex(name)
-            .or_error(|| format!("Couldn't find index for interface {name}"))?;
+        let if_index = if_nametoindex(name)
+            .or_error(|| format!("Couldn't find index for interface {name}"))?
+            as i32;
 
         let mut socket = NlSocket::new(
             NlSocketHandle::connect(NlFamily::Route, None, &[]).error("Netlink socket error")?,
         )
         .error("Netlink socket error")?;
 
-        let ipv4 = get_ipv4(&mut socket, if_index as i32).await?;
-        let ipv6 = get_ipv6(&mut socket, if_index as i32).await?;
-
+        let ipv4 = get_ipv4(&mut socket, if_index).await?;
+        let ipv6 = get_ipv6(&mut socket, if_index).await?;
         let wifi_info = WirelessInfo::new(if_index).await?;
+        let stats = RtnlLinkStats::new(&mut socket, if_index)
+            .await
+            .map_err(|e| Error::new("CHANGE_ME"))
+            .error("Couldn't get interface stats")?;
+        if stats.is_none() {
+            return Ok(None);
+        }
 
         Ok(Some(Self {
             index: if_index,
@@ -46,7 +52,7 @@ impl NetworkInterface {
             ipv4,
             ipv6,
             wifi_info,
-            ..Default::default()
+            stats,
         }))
     }
 
@@ -67,6 +73,37 @@ impl NetworkInterface {
     }
 }
 
+macro_rules! rtnetlink_recv {
+    ($socket:ident, $nl_payload:ident, $nl_type:expr, $if_index:expr, $if_attr:ident, $payload:ident : $ptype:ty => $($body:tt)*) => {
+        let nl_header = Nlmsghdr::new(
+            None,
+            $nl_type,
+            NlmFFlags::new(&[NlmF::Request, NlmF::Dump]),
+            None,
+            None,
+            NlPayload::Payload($nl_payload),
+        );
+        $socket.send(&nl_header).await?;
+
+        'msgs: loop {
+            let msgs = $socket.recv::<u16, $ptype>(&mut Vec::new()).await?;
+            for msg in msgs {
+                if msg.nl_type == u16::from(Nlmsg::Done) {
+                    break 'msgs;
+                }
+
+                if let NlPayload::Payload($payload) = msg.nl_payload {
+                    if $payload.$if_attr != $if_index {
+                        continue;
+                    }
+
+                    $($body)*
+                }
+            }
+        }
+    };
+}
+
 async fn get_ip_addr<const T: usize>(
     socket: &mut NlSocket,
     if_index: i32,
@@ -80,37 +117,24 @@ async fn get_ip_addr<const T: usize>(
         ifa_index: 0,
         rtattrs: RtBuffer::new(),
     };
-    let nl_header = Nlmsghdr::new(
-        None,
-        Rtm::Getaddr,
-        NlmFFlags::new(&[NlmF::Request, NlmF::Dump]),
-        None,
-        None,
-        NlPayload::Payload(ifaddrmsg),
-    );
-    socket.send(&nl_header).await?;
 
     let mut res = None;
-    let msgs = socket.recv::<u16, Ifaddrmsg>(&mut Vec::new()).await?;
-    for msg in msgs {
-        if msg.nl_type == u16::from(Nlmsg::Done) {
-            break;
-        }
-        if let NlPayload::Payload(p) = msg.nl_payload {
-            if p.ifa_index != if_index || RtScope::from(p.ifa_scope) != RtScope::Universe {
-                continue;
-            }
 
-            let rtattrs = p.rtattrs.get_attr_handle();
-            let Some(attr) = rtattrs
-                .get_attribute(Ifa::Local)
-                .or_else(|| rtattrs.get_attribute(Ifa::Address)) else { continue; };
-
-            if let Ok(a) = attr.rta_payload.as_ref().try_into() {
-                res = Some(a);
-            }
+    rtnetlink_recv!(socket, ifaddrmsg, Rtm::Getaddr, if_index, ifa_index, p: Ifaddrmsg => {
+        if RtScope::from(p.ifa_scope) != RtScope::Universe {
+            continue;
         }
-    }
+
+        let rtattrs = p.rtattrs.get_attr_handle();
+        let Some(attr) = rtattrs
+            .get_attribute(Ifa::Local)
+            .or_else(|| rtattrs.get_attribute(Ifa::Address)) else { continue; };
+
+        if let Ok(a) = attr.rta_payload.as_ref().try_into() {
+            res = Some(a);
+        }
+    });
+
     Ok(res)
 }
 
@@ -161,7 +185,7 @@ impl WirelessInfo {
         100. - 70. * ((SIGNAL_MAX_DBM - xbm) / (SIGNAL_MAX_DBM - NOISE_FLOOR_DBM))
     }
 
-    async fn new(iface_index: u32) -> Result<Option<Self>> {
+    async fn new(iface_index: i32) -> Result<Option<Self>> {
         let mut socket = match AsyncSocket::connect() {
             Ok(s) => s,
             Err(_) => return Ok(None),
@@ -174,7 +198,7 @@ impl WirelessInfo {
 
         for iface in interfaces {
             if let Some(index) = iface.index {
-                if index as u32 != iface_index {
+                if index != iface_index {
                     continue;
                 }
 
@@ -216,7 +240,68 @@ impl WirelessInfo {
 }
 
 #[derive(Clone, Debug, SmartDefault, Eq, PartialEq)]
-pub struct InterfaceStats {
+pub struct RtnlLinkStats {
     pub rx_bytes: u64,
     pub tx_bytes: u64,
+}
+
+impl RtnlLinkStats {
+    async fn new(
+        socket: &mut NlSocket,
+        if_index: i32,
+    ) -> Result<Option<Self>, Box<dyn StdError + Send + Sync + 'static>> {
+        let ifinfomsg = Ifinfomsg::new(
+            RtAddrFamily::Unspecified,
+            Arphrd::None,
+            0,
+            IffFlags::empty(),
+            IffFlags::empty(),
+            RtBuffer::new(),
+        );
+
+        let mut res = None;
+
+        rtnetlink_recv!(socket, ifinfomsg, Rtm::Getlink, if_index, ifi_index, p: Ifinfomsg => {
+            for rtattr in p.rtattrs.iter() {
+                match rtattr.rta_type {
+                    Ifla::Operstate => {
+                        let state = rtattr.get_payload_as::<u8>()?;
+                        // https://www.kernel.org/doc/html/latest/networking/operstates.html#tlv-ifla-operstate
+                        if state != 6 {
+                            return Ok(None);
+                        }
+                    }
+                    Ifla::Stats64 => {
+                        res = Some(Self::from_rtnl_link_stats64(rtattr.payload().as_ref())?)
+                    }
+                    _ => (),
+                }
+            }
+        });
+
+        Ok(res)
+    }
+
+    // https://www.kernel.org/doc/html/v5.11/networking/statistics.html#c.rtnl_link_stats64 :
+    // struct rtnl_link_stats {
+    //   __u64 rx_packets,
+    //   __u64 tx_packets,
+    //   __u64 rx_bytes,
+    //   __u64 tx_bytes,
+    //   -- snip --
+    // }
+    // For the purpose of upload and download speed, we only care about rx_bytes and tx_bytes.
+    fn from_rtnl_link_stats64(stats: &[u8]) -> Result<Self> {
+        if stats.len() < 32 {
+            return Err(Error::new(format!(
+                "Bad contents for interface stats: {stats:?}"
+            )));
+        }
+
+        let stats_ptr = stats.as_ptr() as *const u64;
+        Ok(Self {
+            rx_bytes: unsafe { stats_ptr.add(2).read_unaligned() },
+            tx_bytes: unsafe { stats_ptr.add(3).read_unaligned() },
+        })
+    }
 }

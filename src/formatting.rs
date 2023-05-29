@@ -9,7 +9,7 @@ use smart_default::SmartDefault;
 
 use crate::errors::*;
 use crate::pango::*;
-use crate::units::{bytes_to_unit, Unit};
+use crate::units::{bitrate, bytes_to_unit, Unit};
 
 /// Format strings for `full_text` and `short_text`.
 #[derive(Clone, Debug, SmartDefault, Eq, PartialEq)]
@@ -152,6 +152,8 @@ pub enum Value {
         unit: Unit,
         decimals: usize,
     },
+    Bits(f64),
+    Hertz(f64),
 }
 
 impl fmt::Display for Value {
@@ -169,6 +171,8 @@ impl fmt::Display for Value {
                 let (v, u) = bytes_to_unit(*value, *unit);
                 write!(f, "{0:.2$} {1}", v, u, decimals)
             }
+            Value::Bits(b) => write!(f, "{}", bitrate(*b)),
+            Value::Hertz(h) => write!(f, "{0:.1$} GHz", h, 1),
         }
     }
 }
@@ -180,6 +184,10 @@ impl Value {
             unit,
             decimals,
         }
+    }
+
+    pub fn bits(value: f64) -> Value {
+        Self::Bits(value)
     }
 
     pub fn percentage(value: f64) -> Value {

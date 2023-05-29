@@ -33,19 +33,3 @@ title = "local"
 [[module]]
 module = "load_avg"
 format = "Avg: $1min"
-
-[[module]]
-module = "path_exists"
-title = "VPN"
-path = "/non/existing/path"
-
-[[module]]
-module = "run_watch"
-title = "rofi"
-pidfile = "/var/run/user/1000/rofi.pid"
-
-[[module]]
-module = "file_contents"
-title = "Uptime"
-path = "/proc/uptime"
-max_characters = 5
