@@ -67,9 +67,8 @@ You can consult the [documentation](https://csixteen.github.io/honeybee/honeybee
 | CPU usage       | :x:                |
 | Date            | :x:                |
 | Ethernet        | :x:                |
-| IPv4 Address    | :x:                |
 | IPv6 Address    | :x:                |
-| Wireless Info   | :x:                |
+| Wireless Info   | :construction:     |
 | Volume          | :x:                |
 
 ## Output format

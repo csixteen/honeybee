@@ -214,6 +214,20 @@ pub fn unit_to_bytes(amount: u64, unit: Unit) -> u64 {
         }
 }
 
+pub fn bitrate(value: f64) -> String {
+    const KILO: f64 = 1e3;
+    const MEGA: f64 = 1e6;
+    const GIGA: f64 = 1e9;
+
+    if value >= GIGA {
+        format!("{} Gb/s", value / GIGA)
+    } else if value >= MEGA {
+        format!("{} Mb/s", value / MEGA)
+    } else {
+        format!("{} kb/s", value / KILO)
+    }
+}
+
 #[cfg(test)]
 mod tests {
     use super::*;
