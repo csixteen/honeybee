@@ -19,26 +19,26 @@ pub struct Widget {
 }
 
 impl Widget {
-    pub(crate) fn new() -> Self {
+    pub fn new() -> Self {
         Default::default()
     }
 
-    pub(crate) fn with_name(self, name: String) -> Self {
+    pub fn with_name(self, name: String) -> Self {
         Self { name, ..self }
     }
 
-    pub(crate) fn with_instance(self, instance: String) -> Self {
+    pub fn with_instance(self, instance: String) -> Self {
         Self {
             instance: Some(instance),
             ..self
         }
     }
 
-    pub(crate) fn set_state(&mut self, state: WidgetState) {
+    pub fn set_state(&mut self, state: WidgetState) {
         self.state = state;
     }
 
-    pub(crate) fn set_format(&mut self, format: Format) {
+    pub fn set_format(&mut self, format: Format) {
         if let ContentType::Format(f, _) = &mut self.content {
             *f = format;
         } else {
@@ -46,13 +46,13 @@ impl Widget {
         }
     }
 
-    pub(crate) fn set_placeholders(&mut self, placeholders: Placeholders) {
+    pub fn set_placeholders(&mut self, placeholders: Placeholders) {
         if let ContentType::Format(_, p) = &mut self.content {
             *p = Some(placeholders);
         }
     }
 
-    pub(crate) fn color(&self, config: &GeneralConfig) -> Color {
+    pub fn color(&self, config: &GeneralConfig) -> Color {
         match &self.state {
             WidgetState::Normal => config.color_good.clone(),
             WidgetState::Warning => config.color_degraded.clone(),
