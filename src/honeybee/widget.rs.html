@@ -113,26 +113,26 @@
 }
 
 <span class="kw">impl </span>Widget {
-    <span class="kw">pub</span>(<span class="kw">crate</span>) <span class="kw">fn </span>new() -&gt; <span class="self">Self </span>{
+    <span class="kw">pub fn </span>new() -&gt; <span class="self">Self </span>{
         Default::default()
     }
 
-    <span class="kw">pub</span>(<span class="kw">crate</span>) <span class="kw">fn </span>with_name(<span class="self">self</span>, name: String) -&gt; <span class="self">Self </span>{
+    <span class="kw">pub fn </span>with_name(<span class="self">self</span>, name: String) -&gt; <span class="self">Self </span>{
         <span class="self">Self </span>{ name, ..<span class="self">self </span>}
     }
 
-    <span class="kw">pub</span>(<span class="kw">crate</span>) <span class="kw">fn </span>with_instance(<span class="self">self</span>, instance: String) -&gt; <span class="self">Self </span>{
+    <span class="kw">pub fn </span>with_instance(<span class="self">self</span>, instance: String) -&gt; <span class="self">Self </span>{
         <span class="self">Self </span>{
             instance: <span class="prelude-val">Some</span>(instance),
             ..<span class="self">self
         </span>}
     }
 
-    <span class="kw">pub</span>(<span class="kw">crate</span>) <span class="kw">fn </span>set_state(<span class="kw-2">&amp;mut </span><span class="self">self</span>, state: WidgetState) {
+    <span class="kw">pub fn </span>set_state(<span class="kw-2">&amp;mut </span><span class="self">self</span>, state: WidgetState) {
         <span class="self">self</span>.state = state;
     }
 
-    <span class="kw">pub</span>(<span class="kw">crate</span>) <span class="kw">fn </span>set_format(<span class="kw-2">&amp;mut </span><span class="self">self</span>, format: Format) {
+    <span class="kw">pub fn </span>set_format(<span class="kw-2">&amp;mut </span><span class="self">self</span>, format: Format) {
         <span class="kw">if let </span>ContentType::Format(f, <span class="kw">_</span>) = <span class="kw-2">&amp;mut </span><span class="self">self</span>.content {
             <span class="kw-2">*</span>f = format;
         } <span class="kw">else </span>{
@@ -140,13 +140,13 @@
         }
     }
 
-    <span class="kw">pub</span>(<span class="kw">crate</span>) <span class="kw">fn </span>set_placeholders(<span class="kw-2">&amp;mut </span><span class="self">self</span>, placeholders: Placeholders) {
+    <span class="kw">pub fn </span>set_placeholders(<span class="kw-2">&amp;mut </span><span class="self">self</span>, placeholders: Placeholders) {
         <span class="kw">if let </span>ContentType::Format(<span class="kw">_</span>, p) = <span class="kw-2">&amp;mut </span><span class="self">self</span>.content {
             <span class="kw-2">*</span>p = <span class="prelude-val">Some</span>(placeholders);
         }
     }
 
-    <span class="kw">pub</span>(<span class="kw">crate</span>) <span class="kw">fn </span>color(<span class="kw-2">&amp;</span><span class="self">self</span>, config: <span class="kw-2">&amp;</span>GeneralConfig) -&gt; Color {
+    <span class="kw">pub fn </span>color(<span class="kw-2">&amp;</span><span class="self">self</span>, config: <span class="kw-2">&amp;</span>GeneralConfig) -&gt; Color {
         <span class="kw">match </span><span class="kw-2">&amp;</span><span class="self">self</span>.state {
             WidgetState::Normal =&gt; config.color_good.clone(),
             WidgetState::Warning =&gt; config.color_degraded.clone(),

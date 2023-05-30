@@ -1,1 +1,1 @@
-window.SIDEBAR_ITEMS = {"enum":["ErrorKind"],"struct":["Error"],"trait":["OptionExt","ResultExt","StdError","ToSerdeError"],"type":["Result"]};
+window.SIDEBAR_ITEMS = {"enum":["ErrorKind"],"struct":["BoxedError","Error"],"trait":["OptionExt","ResultExt","StdError","ToSerdeError"],"type":["Result"]};

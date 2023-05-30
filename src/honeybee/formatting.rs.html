@@ -215,6 +215,22 @@
 <a href="#215" id="215">215</a>
 <a href="#216" id="216">216</a>
 <a href="#217" id="217">217</a>
+<a href="#218" id="218">218</a>
+<a href="#219" id="219">219</a>
+<a href="#220" id="220">220</a>
+<a href="#221" id="221">221</a>
+<a href="#222" id="222">222</a>
+<a href="#223" id="223">223</a>
+<a href="#224" id="224">224</a>
+<a href="#225" id="225">225</a>
+<a href="#226" id="226">226</a>
+<a href="#227" id="227">227</a>
+<a href="#228" id="228">228</a>
+<a href="#229" id="229">229</a>
+<a href="#230" id="230">230</a>
+<a href="#231" id="231">231</a>
+<a href="#232" id="232">232</a>
+<a href="#233" id="233">233</a>
 </pre><pre class="rust"><code><span class="doccomment">//! Everything related to format strings, placeholders and value types.
 </span><span class="kw">use </span>std::collections::HashMap;
 <span class="kw">use </span>std::fmt::{<span class="self">self</span>, Formatter};
@@ -226,7 +242,7 @@
 
 <span class="kw">use </span><span class="kw">crate</span>::errors::<span class="kw-2">*</span>;
 <span class="kw">use </span><span class="kw">crate</span>::pango::<span class="kw-2">*</span>;
-<span class="kw">use </span><span class="kw">crate</span>::units::{bitrate, bytes_to_unit, Unit};
+<span class="kw">use </span><span class="kw">crate</span>::units::{bitrate, bytes_to_unit, Hertz, Unit};
 
 <span class="doccomment">/// Format strings for `full_text` and `short_text`.
 </span><span class="attr">#[derive(Clone, Debug, SmartDefault, Eq, PartialEq)]
@@ -370,7 +386,11 @@
         decimals: usize,
     },
     Bits(f64),
-    Hertz(f64),
+    Hertz {
+        value: f64,
+        unit: Hertz,
+        decimals: usize,
+    },
 }
 
 <span class="kw">impl </span>fmt::Display <span class="kw">for </span>Value {
@@ -389,7 +409,11 @@
                 <span class="macro">write!</span>(f, <span class="string">&quot;{0:.2$} {1}&quot;</span>, v, u, decimals)
             }
             Value::Bits(b) =&gt; <span class="macro">write!</span>(f, <span class="string">&quot;{}&quot;</span>, bitrate(<span class="kw-2">*</span>b)),
-            Value::Hertz(h) =&gt; <span class="macro">write!</span>(f, <span class="string">&quot;{0:.1$} GHz&quot;</span>, h, <span class="number">1</span>),
+            Value::Hertz {
+                value,
+                unit,
+                decimals,
+            } =&gt; <span class="macro">write!</span>(f, <span class="string">&quot;{0:.1$} {2}&quot;</span>, value, decimals, unit),
         }
     }
 }
@@ -397,6 +421,14 @@
 <span class="kw">impl </span>Value {
     <span class="kw">pub fn </span>byte(value: u64, unit: Unit, decimals: usize) -&gt; Value {
         <span class="self">Self</span>::Byte {
+            value,
+            unit,
+            decimals,
+        }
+    }
+
+    <span class="kw">pub fn </span>hertz(value: f64, unit: Hertz, decimals: usize) -&gt; Value {
+        <span class="self">Self</span>::Hertz {
             value,
             unit,
             decimals,
