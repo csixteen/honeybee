@@ -1,6 +1,17 @@
-use neli::attr::Attribute;
+//! Utilities to manipulate network interfaces using [`netlink`].
+//!
+//! This module uses [`neli`] and [`neli-wifi`] to communicate with the Kernel via
+//! [`netlink sockets`].
+//!
+//! [`netlink`]: https://www.ietf.org/rfc/rfc3549.txt
+//! [`neli`]: https://docs.rs/neli/latest/neli/index.html
+//! [`neli-wifi`]: https://github.com/MaxVerevkin/neli-wifi/
+//! [`netlink sockets`]: https://kernel.org/doc/html/next/userspace-api/netlink/intro.html
+//!
+
 use std::net::{Ipv4Addr, Ipv6Addr};
 
+use neli::attr::Attribute;
 use neli::consts::nl::{NlmF, NlmFFlags, Nlmsg};
 use neli::consts::rtnl::{Arphrd, Ifa, IfaFFlags, IffFlags, Ifla, RtAddrFamily, RtScope, Rtm};
 use neli::consts::socket::NlFamily;
@@ -40,7 +51,7 @@ impl NetworkInterface {
         let wifi_info = WirelessInfo::new(if_index).await?;
         let stats = RtnlLinkStats::new(&mut socket, if_index)
             .await
-            .map_err(|e| Error::new("CHANGE_ME"))
+            .map_err(BoxedError)
             .error("Couldn't get interface stats")?;
         if stats.is_none() {
             return Ok(None);
@@ -85,6 +96,7 @@ macro_rules! rtnetlink_recv {
         );
         $socket.send(&nl_header).await?;
 
+        // Without this loop, I'd get an error `UnexpectedEOB`.
         'msgs: loop {
             let msgs = $socket.recv::<u16, $ptype>(&mut Vec::new()).await?;
             for msg in msgs {
@@ -141,7 +153,7 @@ async fn get_ip_addr<const T: usize>(
 async fn get_ipv4(socket: &mut NlSocket, if_index: i32) -> Result<Option<Ipv4Addr>> {
     Ok(get_ip_addr(socket, if_index, RtAddrFamily::Inet)
         .await
-        .map_err(|_e| Error::new("CHANGE_ME"))
+        .map_err(BoxedError)
         .error("Couldn't get IPv4 address")?
         .map(Ipv4Addr::from))
 }
@@ -149,7 +161,7 @@ async fn get_ipv4(socket: &mut NlSocket, if_index: i32) -> Result<Option<Ipv4Add
 async fn get_ipv6(socket: &mut NlSocket, if_index: i32) -> Result<Option<Ipv6Addr>> {
     Ok(get_ip_addr(socket, if_index, RtAddrFamily::Inet6)
         .await
-        .map_err(|_e| Error::new("CHANGE_ME"))
+        .map_err(BoxedError)
         .error("Couldn't get IPv6 address")?
         .map(Ipv6Addr::from))
 }
@@ -185,7 +197,7 @@ impl WirelessInfo {
         100. - 70. * ((SIGNAL_MAX_DBM - xbm) / (SIGNAL_MAX_DBM - NOISE_FLOOR_DBM))
     }
 
-    async fn new(iface_index: i32) -> Result<Option<Self>> {
+    pub async fn new(iface_index: i32) -> Result<Option<Self>> {
         let mut socket = match AsyncSocket::connect() {
             Ok(s) => s,
             Err(_) => return Ok(None),
@@ -221,7 +233,7 @@ impl WirelessInfo {
                     .or_else(|| {
                         bss.as_ref()
                             .and_then(|bss| bss.information_elements.as_deref())
-                            .and_then(|elems| Self::find_ssid(elems))
+                            .and_then(Self::find_ssid)
                     });
 
                 return Ok(Some(Self {
@@ -239,14 +251,14 @@ impl WirelessInfo {
     }
 }
 
-#[derive(Clone, Debug, SmartDefault, Eq, PartialEq)]
+#[derive(Clone, Copy, Debug, SmartDefault, Eq, PartialEq)]
 pub struct RtnlLinkStats {
     pub rx_bytes: u64,
     pub tx_bytes: u64,
 }
 
 impl RtnlLinkStats {
-    async fn new(
+    pub async fn new(
         socket: &mut NlSocket,
         if_index: i32,
     ) -> Result<Option<Self>, Box<dyn StdError + Send + Sync + 'static>> {
@@ -283,7 +295,7 @@ impl RtnlLinkStats {
     }
 
     // https://www.kernel.org/doc/html/v5.11/networking/statistics.html#c.rtnl_link_stats64 :
-    // struct rtnl_link_stats {
+    // struct rtnl_link_stats64 {
     //   __u64 rx_packets,
     //   __u64 tx_packets,
     //   __u64 rx_bytes,
@@ -291,7 +303,9 @@ impl RtnlLinkStats {
     //   -- snip --
     // }
     // For the purpose of upload and download speed, we only care about rx_bytes and tx_bytes.
-    fn from_rtnl_link_stats64(stats: &[u8]) -> Result<Self> {
+    pub fn from_rtnl_link_stats64(stats: &[u8]) -> Result<Self> {
+        // We need stats to have at least 32 bytes, which will be read as
+        // 4 blocks of 8 bytes. We only care about the 3rd anf 4th blocks.
         if stats.len() < 32 {
             return Err(Error::new(format!(
                 "Bad contents for interface stats: {stats:?}"
@@ -299,6 +313,7 @@ impl RtnlLinkStats {
         }
 
         let stats_ptr = stats.as_ptr() as *const u64;
+
         Ok(Self {
             rx_bytes: unsafe { stats_ptr.add(2).read_unaligned() },
             tx_bytes: unsafe { stats_ptr.add(3).read_unaligned() },

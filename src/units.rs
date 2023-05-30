@@ -181,6 +181,26 @@ impl TryFrom<&str> for SiSymbol {
     }
 }
 
+#[derive(Clone, Copy, Debug, SmartDefault, Eq, PartialEq, Deserialize)]
+pub enum Hertz {
+    Hz,
+    KHz,
+    MHz,
+    #[default]
+    GHz,
+}
+
+impl fmt::Display for Hertz {
+    fn fmt(&self, f: &mut Formatter<'_>) -> fmt::Result {
+        f.write_str(match &self {
+            Hertz::Hz => "Hz",
+            Hertz::KHz => "KHz",
+            Hertz::MHz => "MHz",
+            Hertz::GHz => "GHz",
+        })
+    }
+}
+
 pub fn bytes_to_unit(bytes: u64, target: Unit) -> (f64, Unit) {
     let mut b = bytes as f64;
     let mut exponent = 0_usize;
