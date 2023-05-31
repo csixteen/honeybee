@@ -125,6 +125,7 @@ pub(crate) async fn run(config: Config, bridge: Bridge) -> Result<()> {
                         stats_timer = Instant::now();
                         rx_speed = (new_stats.rx_bytes - old_stats.rx_bytes) as f64 / elapsed;
                         tx_speed = (new_stats.tx_bytes - old_stats.tx_bytes) as f64 / elapsed;
+                        stats = Some(new_stats);
                     }
                 }
 
