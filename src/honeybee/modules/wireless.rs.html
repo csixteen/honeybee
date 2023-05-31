@@ -150,6 +150,7 @@
 <a href="#150" id="150">150</a>
 <a href="#151" id="151">151</a>
 <a href="#152" id="152">152</a>
+<a href="#153" id="153">153</a>
 </pre><pre class="rust"><code><span class="doccomment">//! Gets the link signal, frequency and SSID of the given wireless network interface.
 //!
 //! # Configuration
@@ -277,6 +278,7 @@
                         stats_timer = Instant::now();
                         rx_speed = (new_stats.rx_bytes - old_stats.rx_bytes) <span class="kw">as </span>f64 / elapsed;
                         tx_speed = (new_stats.tx_bytes - old_stats.tx_bytes) <span class="kw">as </span>f64 / elapsed;
+                        stats = <span class="prelude-val">Some</span>(new_stats);
                     }
                 }
 
