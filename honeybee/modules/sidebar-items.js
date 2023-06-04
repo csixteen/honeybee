@@ -1,1 +1,1 @@
-window.SIDEBAR_ITEMS = {"enum":["ModuleConfig"],"mod":["battery","disk","file_contents","load_avg","memory","path_exists","run_watch","time","wireless"],"struct":["Module"]};
+window.SIDEBAR_ITEMS = {"enum":["ModuleConfig"],"mod":["battery","disk","file_contents","load_avg","memory","path_exists","run_watch","time","volume","wireless"],"struct":["Module"]};
