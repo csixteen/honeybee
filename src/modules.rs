@@ -41,5 +41,7 @@ crate::modules!(
     run_watch,
     time,
     #[cfg(target_os = "linux")]
+    volume,
+    #[cfg(target_os = "linux")]
     wireless
 );
