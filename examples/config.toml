@@ -33,3 +33,11 @@ title = "local"
 [[module]]
 module = "load_avg"
 format = "Avg: $1min"
+
+[[module]]
+module = "volume"
+format = "♪: $volume"
+format_muted = "♪: muted ($volume)"
+device = "default"
+mixer = "Master"
+mixer_idx = 0

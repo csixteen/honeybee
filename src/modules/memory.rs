@@ -39,11 +39,11 @@
 //! unit = "GiB"
 //! ```
 
-use crate::units::unit_to_bytes;
 use tokio::fs::File;
 use tokio::io::{AsyncBufReadExt, BufReader};
 
 use super::prelude::*;
+use crate::units::unit_to_bytes;
 
 #[derive(Clone, Debug, SmartDefault, PartialEq, Deserialize)]
 #[serde(default)]

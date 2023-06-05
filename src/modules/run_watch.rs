@@ -29,7 +29,6 @@
 //! pidfile = "/path/to/vpn*.pid"
 //! format_down = "$title is down!!!"
 //! ```
-use std::sync::Arc;
 
 use glob::glob;
 use nix::sys::signal;

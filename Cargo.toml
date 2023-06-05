@@ -3,16 +3,21 @@ name = "honeybee"
 description = "A port of the original i3status, written in Rust."
 repository = "https://github.com/csixteen/honeybee/"
 readme = "README.md"
-version = "0.11.0-alpha1"
+version = "0.11.0-alpha2"
 edition = "2021"
 license = "MIT"
 authors = ["Pedro Rodrigues <csixteen@proton.me>"]
+
+[features]
+default = []
+pulseaudio = []
 
 [package.metadata.docs.rs]
 all-features = true
 rustdoc-args = ["--cfg", "docsrs"]
 
 [dependencies]
+alsa = "0.7"
 bytes = "1.4"
 chrono-tz = "0.8"
 dirs = "5.0"
