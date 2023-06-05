@@ -26,8 +26,6 @@
 //! format = "$title: $content"
 //! max_characters = 6
 
-use std::sync::Arc;
-
 use bytes::BytesMut;
 use tokio::fs;
 use tokio::io::AsyncReadExt;

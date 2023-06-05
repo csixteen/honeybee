@@ -1,5 +1,6 @@
 pub use std::path::Path;
 pub use std::str::FromStr;
+pub use std::sync::Arc;
 
 pub(super) use serde::Deserialize;
 pub use smart_default::SmartDefault;
