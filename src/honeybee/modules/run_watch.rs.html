@@ -112,7 +112,6 @@
 <a href="#112" id="112">112</a>
 <a href="#113" id="113">113</a>
 <a href="#114" id="114">114</a>
-<a href="#115" id="115">115</a>
 </pre></div><pre class="rust"><code><span class="doccomment">//! Expands the given path to a pidfile and checks if the process ID found inside is of
 //! a running process. You can use this to check if a specific application, such as a VPN
 //! client, is running.
@@ -144,9 +143,8 @@
 //! pidfile = &quot;/path/to/vpn*.pid&quot;
 //! format_down = &quot;$title is down!!!&quot;
 //! ```
-</span><span class="kw">use </span>std::sync::Arc;
 
-<span class="kw">use </span>glob::glob;
+</span><span class="kw">use </span>glob::glob;
 <span class="kw">use </span>nix::sys::signal;
 <span class="kw">use </span>nix::unistd::Pid;
 <span class="kw">use </span>tokio::fs;
