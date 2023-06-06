@@ -32,6 +32,8 @@ jobs:
             run: cargo test --verbose
     steps:
       - uses: actions/checkout@v2
+      - name: Install dependencies
+        run: sudo apt-get update && sudo apt-get install --no-install-recommends -y libasound2-dev
       - name: Install Rust ${{ matrix.rust }}
         uses: actions-rs/toolchain@v1
         with:
