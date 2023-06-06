@@ -63,13 +63,13 @@ You can consult the [documentation](https://csixteen.github.io/honeybee/honeybee
 | Run watch       | :heavy_check_mark: |
 | Time            | :heavy_check_mark: |
 | Timezone        | :heavy_check_mark: |
+| Volume          | :construction:     |
 | Wireless Info   | :heavy_check_mark: |
 | CPU Temperature | :x:                |
 | CPU usage       | :x:                |
 | Date            | :x:                |
 | Ethernet        | :x:                |
 | IPv6 Address    | :x:                |
-| Volume          | :x:                |
 
 ## Output format
 
