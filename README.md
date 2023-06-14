@@ -52,9 +52,9 @@ property1 = "value1"
 
 You can consult the [documentation](https://csixteen.github.io/honeybee/honeybee/modules/index.html) for details on how to configure the modules.
 
-| Module          | Status             |
-|-----------------|--------------------|
-| Battery         | :construction:     |
+| Module          | Status             | Notes                    |
+|-----------------|--------------------|--------------------------|
+| Battery         | :heavy_check_mark: | Only Linux supported atm |
 | Disk            | :heavy_check_mark: |
 | File Contents   | :heavy_check_mark: |
 | Load Average    | :heavy_check_mark: |
@@ -63,8 +63,8 @@ You can consult the [documentation](https://csixteen.github.io/honeybee/honeybee
 | Run watch       | :heavy_check_mark: |
 | Time            | :heavy_check_mark: |
 | Timezone        | :heavy_check_mark: |
-| Volume          | :construction:     |
-| Wireless Info   | :heavy_check_mark: |
+| Volume          | :heavy_check_mark: | Only ALSA supported atm  |
+| Wireless Info   | :heavy_check_mark: | Only Linux supported atm |
 | CPU Temperature | :x:                |
 | CPU usage       | :x:                |
 | Date            | :x:                |
