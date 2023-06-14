@@ -71,10 +71,7 @@
 <a href="#71" id="71">71</a>
 <a href="#72" id="72">72</a>
 <a href="#73" id="73">73</a>
-<a href="#74" id="74">74</a>
-<a href="#75" id="75">75</a>
 </pre></div><pre class="rust"><code><span class="kw">mod </span>alsa;
-<span class="kw">mod </span>oss;
 <span class="attr">#[cfg(feature = <span class="string">&quot;pulseaudio&quot;</span>)]
 </span><span class="kw">mod </span>pulseaudio;
 
@@ -133,14 +130,13 @@
 
 <span class="attr">#[cfg(not(feature = <span class="string">&quot;pulseaudio&quot;</span>))]
 </span><span class="kw">fn </span>get_volume(config: <span class="kw-2">&amp;</span>Config) -&gt; <span class="prelude-ty">Result</span>&lt;Volume&gt; {
-    alsa::get_volume(<span class="kw-2">&amp;</span>config.device, <span class="kw-2">&amp;</span>config.mixer, config.mixer_idx).or_else(|<span class="kw">_</span>| oss::get_volume())
+    alsa::get_volume(<span class="kw-2">&amp;</span>config.device, <span class="kw-2">&amp;</span>config.mixer, config.mixer_idx)
 }
 
 <span class="attr">#[cfg(feature = <span class="string">&quot;pulseaudio&quot;</span>)]
 </span><span class="kw">fn </span>get_volume(config: <span class="kw-2">&amp;</span>Config) -&gt; <span class="prelude-ty">Result</span>&lt;Volume&gt; {
     pulseaudio::get_volume()
         .or_else(|<span class="kw">_</span>| alsa::get_volume(<span class="kw-2">&amp;</span>config.device, <span class="kw-2">&amp;</span>config.mixer, config.mixer_idx))
-        .or_else(|<span class="kw">_</span>| oss::get_volume())
 }
 
 <span class="attr">#[derive(Clone, Debug, PartialEq)]
