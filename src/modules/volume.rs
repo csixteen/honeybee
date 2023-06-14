@@ -1,5 +1,4 @@
 mod alsa;
-mod oss;
 #[cfg(feature = "pulseaudio")]
 mod pulseaudio;
 
@@ -58,14 +57,13 @@ pub(crate) async fn run(config: Config, bridge: Bridge) -> Result<()> {
 
 #[cfg(not(feature = "pulseaudio"))]
 fn get_volume(config: &Config) -> Result<Volume> {
-    alsa::get_volume(&config.device, &config.mixer, config.mixer_idx).or_else(|_| oss::get_volume())
+    alsa::get_volume(&config.device, &config.mixer, config.mixer_idx)
 }
 
 #[cfg(feature = "pulseaudio")]
 fn get_volume(config: &Config) -> Result<Volume> {
     pulseaudio::get_volume()
         .or_else(|_| alsa::get_volume(&config.device, &config.mixer, config.mixer_idx))
-        .or_else(|_| oss::get_volume())
 }
 
 #[derive(Clone, Debug, PartialEq)]
